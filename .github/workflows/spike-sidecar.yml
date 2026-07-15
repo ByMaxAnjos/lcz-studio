@@ -23,6 +23,7 @@ jobs:
         run: bash build_sidecar.sh
       - name: List produced binary
         working-directory: desktop/src-tauri/binaries
+        shell: bash
         run: ls -la
       - name: Smoke test sidecar starts and serves /health
         shell: bash
