@@ -54,18 +54,19 @@ LCZ Studio
 │   ├── Window Management
 │   ├── File System Access
 │   └── Native Integration
-└── Backend (Optional R integration)
-    └── LCZ4r R package functions
+└── Backend (Python sidecar, FastAPI)
+    └── LCZ4py functions (Python port of the LCZ4r R package)
 ```
 
 ## 📋 Tech Stack
 
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
-| **UI** | React 18, TypeScript, TailwindCSS | User interface |
+| **UI** | React 18, TypeScript, plain CSS | User interface |
 | **Map** | MapLibre GL JS, deck.gl | Interactive mapping |
 | **Data** | DuckDB-WASM Spatial | In-browser SQL queries |
 | **Desktop** | Tauri v2, Rust | Cross-platform desktop app |
+| **Backend** | Python (FastAPI) + LCZ4py | LCZ analysis sidecar |
 | **State** | Zustand | State management |
 | **Build** | Vite, npm workspaces | Build tooling |
 
