@@ -8,6 +8,14 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
+# venv's bash-compatible activate script lives under bin/ on macOS/Linux and
+# Scripts/ on Windows (python -m venv creates both there); binaries built by
+# PyInstaller need a .exe suffix on Windows.
+case "$(uname -s)" in
+    MINGW*|MSYS*|CYGWIN*) VENV_BIN_DIR="Scripts"; EXE_SUFFIX=".exe" ;;
+    *)                    VENV_BIN_DIR="bin"; EXE_SUFFIX="" ;;
+esac
+
 echo "==> Creating Python virtual environment..."
 # Prefer native arm64 Python (Homebrew) over conda x86_64 to avoid Rosetta 2 overhead.
 # PyInstaller binary arch must match the rustc host triple for Tauri bundling.
@@ -17,13 +25,16 @@ if [ "$(uname -m)" = "arm64" ] && [ -x "/opt/homebrew/bin/python3.13" ]; then
 elif [ "$(uname -m)" = "arm64" ] && [ -x "/opt/homebrew/bin/python3" ]; then
     PYTHON_BIN="/opt/homebrew/bin/python3"
     echo "==> Using native arm64 Python: $PYTHON_BIN"
-else
+elif command -v python3 &>/dev/null; then
     PYTHON_BIN="python3"
     echo "==> Using system Python: $PYTHON_BIN ($(python3 -c 'import platform; print(platform.machine())'))"
+else
+    PYTHON_BIN="python"
+    echo "==> Using system Python: $PYTHON_BIN ($(python -c 'import platform; print(platform.machine())'))"
 fi
 "$PYTHON_BIN" -m venv .venv-sidecar-native
 # shellcheck source=/dev/null
-source .venv-sidecar-native/bin/activate
+source ".venv-sidecar-native/$VENV_BIN_DIR/activate"
 
 echo "==> Installing dependencies..."
 pip install --upgrade pip --quiet
@@ -36,7 +47,7 @@ LCZ4PY_WHEEL_URL="https://test-files.pythonhosted.org/packages/fd/69/17472248394
 LCZ4PY_SHA256="2a32239b246b76f5738298f39b37cc223bf0054facf8322b35f9ff4b282ed6ee"
 
 curl -fsSL "$LCZ4PY_WHEEL_URL" -o lcz4py-0.1.0-py3-none-any.whl
-ACTUAL_SHA256=$(shasum -a 256 lcz4py-0.1.0-py3-none-any.whl | awk '{print $1}')
+ACTUAL_SHA256=$(python -c "import hashlib,sys; print(hashlib.sha256(open(sys.argv[1],'rb').read()).hexdigest())" lcz4py-0.1.0-py3-none-any.whl)
 if [ "$ACTUAL_SHA256" != "$LCZ4PY_SHA256" ]; then
     echo "ERROR: LCZ4py wheel checksum mismatch" >&2
     exit 1
@@ -48,10 +59,14 @@ fi
 pip install "LCZ4py[all] @ file://$SCRIPT_DIR/lcz4py-0.1.0-py3-none-any.whl" --quiet
 
 echo "==> Running PyInstaller..."
+RUNTIME_TMPDIR_ARGS=()
+if [ "$VENV_BIN_DIR" != "Scripts" ]; then
+    RUNTIME_TMPDIR_ARGS=(--runtime-tmpdir /tmp/lcz-studio-runtime)
+fi
 pyinstaller \
     --onefile \
     --name lcz-api \
-    --runtime-tmpdir /tmp/lcz-studio-runtime \
+    "${RUNTIME_TMPDIR_ARGS[@]}" \
     --hidden-import rasterio._shim \
     --hidden-import rasterio.drivers \
     --hidden-import rasterio._features \
@@ -139,8 +154,8 @@ echo "==> Target triple: $TRIPLE"
 BINARIES_DIR="$SCRIPT_DIR/../src-tauri/binaries"
 mkdir -p "$BINARIES_DIR"
 
-DEST="$BINARIES_DIR/lcz-api-${TRIPLE}"
-cp dist/lcz-api "$DEST"
+DEST="$BINARIES_DIR/lcz-api-${TRIPLE}${EXE_SUFFIX}"
+cp "dist/lcz-api${EXE_SUFFIX}" "$DEST"
 chmod +x "$DEST"
 
 echo "==> Sidecar binary ready: $DEST"

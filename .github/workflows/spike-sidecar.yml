@@ -1,0 +1,49 @@
+name: Spike - sidecar bundling per platform
+
+# Throwaway probe: does `build_sidecar.sh` produce a working PyInstaller
+# binary on Windows and Linux, not just the proven macOS arm64 build?
+# Run manually before committing to a real release workflow.
+on:
+  workflow_dispatch:
+
+jobs:
+  build-sidecar:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Build sidecar
+        working-directory: desktop/sidecar
+        run: bash build_sidecar.sh
+      - name: List produced binary
+        working-directory: desktop/src-tauri/binaries
+        run: ls -la
+      - name: Smoke test sidecar starts and serves /health
+        shell: bash
+        run: |
+          BIN=$(ls desktop/src-tauri/binaries/lcz-api-* | head -1)
+          chmod +x "$BIN" || true
+          "$BIN" &
+          PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:8765/health; then
+              echo "sidecar healthy"
+              kill $PID
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "sidecar never became healthy" >&2
+          kill $PID || true
+          exit 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sidecar-${{ matrix.os }}
+          path: desktop/src-tauri/binaries/
