@@ -1,0 +1,26 @@
+{
+  "identifier": "default",
+  "description": "Default capabilities for LCZ Studio desktop app",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "dialog:allow-message",
+    "fs:allow-read-file",
+    "fs:allow-write-file",
+    "fs:allow-mkdir",
+    "fs:allow-exists",
+    "fs:allow-read-dir",
+    "fs:allow-rename",
+    "fs:allow-remove",
+    "fs:scope-appdata-recursive",
+    "fs:scope-temp-recursive",
+    "fs:scope-document-recursive",
+    "fs:scope-download-recursive",
+    "shell:allow-execute",
+    "shell:allow-spawn",
+    "shell:allow-kill",
+    "shell:allow-open"
+  ]
+}

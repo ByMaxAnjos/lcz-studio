@@ -1,0 +1,30 @@
+.r-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.65rem 0.8rem;
+  font-size: 11px;
+  border-top: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--text);
+}
+
+.r-status-bar.connected { background: rgba(76, 175, 80, 0.12); color: #305e32; }
+.r-status-bar.connecting { background: rgba(255, 193, 7, 0.12); color: #7c6a1a; }
+
+.r-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.r-status-bar.connected .r-status-dot { background: #66bb6a; }
+.r-status-bar.connecting .r-status-dot { background: #ffd54f; animation: blink 1.2s infinite; }
+
+.r-status-error { color: #b23b3b; }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}

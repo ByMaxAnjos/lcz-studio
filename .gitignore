@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Build output
+frontend/dist/
+desktop/src-tauri/target/
+desktop/src-tauri/gen/
+
+# Python sidecar (built locally via build_sidecar.sh, not committed)
+desktop/sidecar/.venv-sidecar*/
+desktop/sidecar/__pycache__/
+desktop/sidecar/dist/
+desktop/sidecar/build/
+desktop/sidecar/*.spec.bak
+desktop/sidecar/lcz4py-*.whl
+desktop/sidecar/LCZ4r_output/
+desktop/src-tauri/binaries/lcz-api-*
+
+# Runtime/cache/output artifacts
+**/LCZ4r_output/
+**/lcz4r_cache/
+.lcz4r_cache/
+*.log
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Env
+.env
+.env.local

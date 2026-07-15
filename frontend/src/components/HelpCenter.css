@@ -1,0 +1,279 @@
+.help-page {
+  color: #17331d;
+  background:
+    radial-gradient(circle at 100% 0, rgba(128, 193, 134, 0.14), transparent 34%),
+    #fff;
+  border: 1px solid rgba(205, 224, 208, 0.92);
+  border-radius: 22px;
+  box-shadow: 0 18px 50px rgba(9, 29, 14, 0.12);
+  overflow: auto;
+}
+
+.help-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 18px 30px 0;
+}
+
+.help-nav a {
+  color: #2f743b;
+  background: #edf7ee;
+  border: 1px solid #d2e7d5;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.help-nav a:hover { background: #e2f1e4; }
+
+.guide-icon {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.help-page-header {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 15px;
+  align-items: start;
+  padding: 28px 30px 22px;
+  border-bottom: 1px solid #e2eae3;
+}
+
+.help-dialog-mark {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(145deg, #3e8b49, #276a33);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(39, 106, 51, 0.22);
+}
+
+.help-dialog-eyebrow {
+  display: block;
+  margin-bottom: 4px;
+  color: #3b7a45;
+  font-size: 0.67rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.help-dialog-header h2 {
+  margin: 0 0 6px;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.help-dialog-header p {
+  max-width: 520px;
+  margin: 0;
+  color: #64736a;
+  font-size: 0.83rem;
+  line-height: 1.5;
+}
+
+.help-page-actions button:focus-visible,
+.help-highlight-link:focus-visible {
+  outline: 2px solid #4caf50;
+  outline-offset: 2px;
+}
+
+.help-steps {
+  display: none;
+}
+
+.help-intro {
+  display: grid;
+  gap: 14px;
+  padding: 18px 30px 16px;
+}
+
+.help-intro-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 0;
+}
+
+.help-intro-item .guide-icon {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: #2f743b;
+}
+
+.help-intro-item h3 {
+  margin: 0 0 4px;
+  color: #203e27;
+  font-size: 0.92rem;
+}
+
+.help-intro-item p {
+  margin: 0;
+  color: #6b796f;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.help-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 30px 22px;
+  padding: 12px 14px;
+  color: #35533c;
+  background: #edf7ee;
+  border: 1px solid #d2e7d5;
+  border-radius: 12px;
+}
+.help-tip .guide-icon { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 1px; color: #2f743b; }
+.help-tip p { margin: 0; font-size: 0.72rem; line-height: 1.5; }
+
+.help-section {
+  padding: 0 30px 18px;
+}
+
+.help-section-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.help-section-heading h3 {
+  margin: 0 0 4px;
+  font-size: 0.93rem;
+}
+
+.help-section-heading p {
+  margin: 0;
+  color: #65726a;
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.help-section-heading .guide-icon { width: 20px; height: 20px; color: #2f743b; }
+
+.help-reference-list,
+.help-tutorial-list,
+.help-start-list {
+  display: grid;
+  gap: 12px;
+}
+
+.help-inline-reference,
+.help-tutorial-line,
+.help-start-line {
+  display: grid;
+  gap: 4px;
+  padding-left: 2px;
+}
+
+.help-inline-reference {
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+}
+
+.help-inline-reference .guide-icon {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  color: #2f743b;
+}
+
+.help-inline-reference p,
+.help-tutorial-line p,
+.help-start-line p {
+  margin: 0;
+  color: #6b796f;
+  font-size: 0.78rem;
+  line-height: 1.55;
+}
+
+.help-inline-reference strong,
+.help-tutorial-line strong,
+.help-start-line strong {
+  color: #203e27;
+  font-size: 0.86rem;
+}
+
+.help-inline-reference a {
+  color: #2f743b;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.help-inline-reference a:hover { text-decoration: underline; }
+
+.help-page-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  padding: 18px 30px 24px;
+  background: #f8faf8;
+  border-top: 1px solid #e2eae3;
+  border-radius: 0 0 22px 22px;
+}
+
+.help-page-actions button,
+.help-highlight-link {
+  min-height: 38px;
+  padding: 8px 14px;
+  color: #31563a;
+  background: #fff;
+  border: 1px solid #cdddcf;
+  border-radius: 10px;
+  font: 650 0.74rem/1.2 inherit;
+  cursor: pointer;
+}
+
+.help-start-section { padding-top: 0; }
+.help-page-actions button:hover,
+.help-highlight-link:hover { background: #edf5ee; border-color: #9fc5a3; }
+.help-page-actions button.primary {
+  color: #fff;
+  background: linear-gradient(135deg, #347f40, #286d35);
+  border-color: #286d35;
+  box-shadow: 0 6px 15px rgba(40, 109, 53, 0.18);
+}
+
+.help-highlight-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 30px 14px;
+  color: #2f743b;
+  text-decoration: none;
+}
+
+.help-highlight-link .guide-icon { width: 18px; height: 18px; flex: 0 0 auto; }
+.help-highlight-link small { margin-left: auto; color: #617066; font-size: 0.68rem; }
+
+@media (max-width: 720px) {
+  .help-page { border-radius: 17px; }
+  .help-page-header { padding: 22px 20px 18px; }
+  .help-nav { padding: 16px 20px 0; }
+  .help-intro,
+  .help-section { padding-left: 20px; padding-right: 20px; }
+  .help-reference-list,
+  .help-tutorial-list,
+  .help-start-list { gap: 10px; }
+  .help-tip { margin: 0 20px 18px; }
+  .help-section { padding: 0 20px 16px; }
+  .help-page-actions { flex-direction: column; padding: 16px 20px 20px; }
+  .help-page-actions button { width: 100%; }
+}

@@ -1,0 +1,300 @@
+.sidebar {
+  width: 300px;
+  background:
+    radial-gradient(circle at top right, rgba(134, 194, 111, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(244, 249, 242, 0.9));
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.sidebar-section {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-section h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tools-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tool-btn {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.9rem;
+  transition: all 0.25s var(--ease);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+
+.tool-btn:hover {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(76, 175, 80, 0.24);
+  color: var(--brand);
+  transform: translateY(-1px);
+}
+
+.tool-btn:active {
+  transform: translateY(0);
+}
+
+.layers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.empty-state {
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 1rem 0;
+  margin: 0;
+}
+
+.layer-item {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.75rem;
+  transition: all 0.25s var(--ease);
+}
+
+.layer-item:hover {
+  border-color: rgba(76, 175, 80, 0.3);
+  box-shadow: var(--shadow-sm);
+}
+
+.layer-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.layer-header input[type='checkbox'] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.layer-name {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.layer-remove-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-soft);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  transition: all 0.2s ease;
+}
+
+.layer-remove-btn:hover {
+  background: rgba(239, 83, 80, 0.1);
+  color: #d32f2f;
+}
+
+.opacity-slider {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(45, 80, 22, 0.14);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.opacity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.opacity-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.12);
+}
+
+.opacity-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.opacity-slider::-moz-range-thumb:hover {
+  box-shadow: 0 0 0 6px rgba(76, 175, 80, 0.12);
+}
+
+/* Tool buttons -- new layout with icon + label */
+.sidebar-tools {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.getting-started-card {
+  margin: 10px 10px 0;
+  padding: 0.9rem;
+  border: 1px solid rgba(76, 175, 80, 0.16);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at top right, rgba(134, 194, 111, 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(240, 248, 237, 0.92) 100%);
+  box-shadow: var(--shadow-sm);
+}
+
+.getting-started-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.getting-started-header h3 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.95rem;
+  color: var(--brand);
+}
+
+.getting-started-header p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-weak);
+  line-height: 1.4;
+}
+
+.dismiss-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-weak);
+  font-size: 1.1rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.dismiss-btn:hover {
+  background: rgba(45, 80, 22, 0.08);
+  border-color: transparent;
+}
+
+.getting-started-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.quick-action {
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--brand);
+  border: 1px solid rgba(76, 175, 80, 0.14);
+  text-align: left;
+  padding: 0.65rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-action:hover {
+  background: white;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+}
+
+.tool-btn.active {
+  background: linear-gradient(135deg, rgba(45, 80, 22, 0.12), rgba(76, 175, 80, 0.14));
+  border-color: rgba(76, 175, 80, 0.3);
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.tool-icon { font-size: 1rem; flex-shrink: 0; }
+.tool-label { flex: 1; }
+
+/* Active panel section */
+.sidebar-panel {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.68);
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+/* Layers section */
+.sidebar-layers {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar styling */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(45, 80, 22, 0.06);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(45, 80, 22, 0.18);
+  border-radius: 999px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(45, 80, 22, 0.28);
+}
