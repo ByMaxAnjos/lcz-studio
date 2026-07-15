@@ -6,7 +6,11 @@ import { invoke } from '@tauri-apps/api/core'
 import { useStore } from '../store/useStore'
 
 const SIDECAR_URL        = 'http://127.0.0.1:8765'
-const STARTUP_TIMEOUT_MS = 30_000
+// A PyInstaller --onefile binary self-extracts on every cold start before the
+// heavy geo import chain (rasterio/fiona/duckdb/datashader) even begins —
+// on a first run (nothing cached, possibly still being scanned by antivirus)
+// this can comfortably exceed 30s, especially on Windows.
+const STARTUP_TIMEOUT_MS = 90_000
 const WEB_DETECT_TIMEOUT = 5_000
 const POLL_INTERVAL_MS   = 800
 

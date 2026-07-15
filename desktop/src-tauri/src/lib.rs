@@ -1,6 +1,8 @@
+use std::fs::OpenOptions;
+use std::io::Write;
 use std::sync::Mutex;
 use tauri::{AppHandle, Manager, State};
-use tauri_plugin_shell::process::CommandChild;
+use tauri_plugin_shell::process::{CommandChild, CommandEvent};
 use tauri_plugin_shell::ShellExt;
 
 // ---------------------------------------------------------------------------
@@ -44,7 +46,7 @@ fn start_r_sidecar(
     if guard.is_some() {
         return Ok(()); // already running
     }
-    let (_rx, child) = app
+    let (mut rx, child) = app
         .shell()
         .sidecar("lcz-api")
         .map_err(|e| format!("lcz-api binary not found: {e}"))?
@@ -52,6 +54,33 @@ fn start_r_sidecar(
         .spawn()
         .map_err(|e| format!("Failed to start Python sidecar: {e}"))?;
     *guard = Some(child);
+
+    // Persist stdout/stderr so a sidecar crash/slow-start is diagnosable
+    // after the fact (e.g. the console window isn't visible on Windows).
+    let log_path = std::path::Path::new(&output_dir)
+        .parent()
+        .unwrap_or(std::path::Path::new(&output_dir))
+        .join("sidecar.log");
+    tauri::async_runtime::spawn(async move {
+        let mut log_file = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&log_path)
+            .ok();
+        while let Some(event) = rx.recv().await {
+            let line = match event {
+                CommandEvent::Stdout(bytes) => Some(format!("[stdout] {}", String::from_utf8_lossy(&bytes))),
+                CommandEvent::Stderr(bytes) => Some(format!("[stderr] {}", String::from_utf8_lossy(&bytes))),
+                CommandEvent::Error(err) => Some(format!("[error] {err}")),
+                CommandEvent::Terminated(payload) => Some(format!("[terminated] {payload:?}")),
+                _ => None,
+            };
+            if let (Some(line), Some(file)) = (line, log_file.as_mut()) {
+                let _ = writeln!(file, "{line}");
+            }
+        }
+    });
+
     Ok(())
 }
 
