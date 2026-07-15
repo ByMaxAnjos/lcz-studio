@@ -47,3 +47,4 @@ jobs:
         with:
           name: sidecar-${{ matrix.os }}
           path: desktop/src-tauri/binaries/
+# retrigger 1784146564
