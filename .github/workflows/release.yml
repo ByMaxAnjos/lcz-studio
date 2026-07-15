@@ -1,0 +1,87 @@
+name: Release desktop app
+
+# Builds the LCZ Studio desktop app for macOS, Windows, and Linux, and
+# publishes the installers to a GitHub Release. PyInstaller can't
+# cross-compile, so the Python sidecar (LCZ4py + GDAL/rasterio/fiona) is
+# built natively on each OS's own runner before `tauri build` bundles it in.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Linux system dependencies (Tauri v2 requirements)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev \
+            patchelf build-essential libssl-dev libgtk-3-dev
+
+      - name: Install JS dependencies
+        run: npm install
+
+      - name: Build Python sidecar (PyInstaller, native to this OS)
+        working-directory: desktop/sidecar
+        run: bash build_sidecar.sh
+
+      - name: Build Tauri app
+        working-directory: desktop
+        run: npm run tauri build
+
+      - name: Collect installers
+        shell: bash
+        run: |
+          mkdir -p dist-artifacts
+          BUNDLE=desktop/src-tauri/target/release/bundle
+          find "$BUNDLE" \( -name '*.dmg' -o -name '*.exe' -o -name '*.msi' -o -name '*.deb' -o -name '*.AppImage' \) \
+            -exec cp {} dist-artifacts/ \;
+          ls -la dist-artifacts/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lcz-studio-${{ matrix.os }}
+          path: dist-artifacts/
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist-artifacts
+          merge-multiple: true
+
+      - name: List everything to publish
+        run: ls -la dist-artifacts/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist-artifacts/*
+          draft: ${{ github.event_name == 'workflow_dispatch' }}
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true

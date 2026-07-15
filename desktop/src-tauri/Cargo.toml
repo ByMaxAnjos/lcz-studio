@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Local-first desktop GIS for urban-climate / Local Climate Zone analysis"
 authors = ["LCZ Studio Contributors"]
 license = "MIT"
-repository = ""
+repository = "https://github.com/ByMaxAnjos/lcz-studio"
 edition = "2021"
 rust-version = "1.60"
 
