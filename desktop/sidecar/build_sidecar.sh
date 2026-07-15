@@ -56,7 +56,11 @@ fi
 # Install every published optional capability so the desktop catalog can run
 # general and local workflows without silently dropping interpolation,
 # visualization, zonal, UCP, LST, ERA5, DuckDB, or GeoArrow support.
-pip install "LCZ4py[all] @ file://$SCRIPT_DIR/lcz4py-0.1.0-py3-none-any.whl" --quiet
+# Build the file:// URI with pathlib (not bash string concat): on Windows,
+# bash's own path (e.g. /d/a/...) doesn't match what the native Windows pip
+# needs (file:///D:/a/...), so let Python normalize it for the current OS.
+WHEEL_URI=$(python -c "from pathlib import Path; print(Path('lcz4py-0.1.0-py3-none-any.whl').resolve().as_uri())")
+pip install "LCZ4py[all] @ $WHEEL_URI" --quiet
 
 echo "==> Running PyInstaller..."
 RUNTIME_TMPDIR_ARGS=()
