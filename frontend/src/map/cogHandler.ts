@@ -37,10 +37,18 @@ export async function readCOGMetadata(source: string | File): Promise<COGMetadat
   }
 }
 
+export interface COGRenderOptions {
+  /** Force LCZ-palette coloring (classes 1-17) instead of relying on the
+   *  value-range heuristic below — set when the caller already knows the
+   *  raster is an LCZ classification (e.g. straight from lcz_get_map). */
+  renderMode?: 'lcz'
+}
+
 export async function cogToImageData(
   source: string | File,
   maxWidth = 1024,
-  maxHeight = 1024
+  maxHeight = 1024,
+  options: COGRenderOptions = {}
 ): Promise<{ imageData: ImageData; bounds: [[number, number], [number, number]]; width: number; height: number }> {
   const tiff = await openTiff(source)
   const image = await tiff.getImage()
@@ -74,9 +82,11 @@ export async function cogToImageData(
       continue
     }
 
-    if (v >= 1 && v <= 17) {
-      // LCZ classified raster
-      const hex = getLCZColor(v)
+    if (options.renderMode === 'lcz' || (v >= 1 && v <= 17)) {
+      // LCZ classified raster — renderMode:'lcz' forces this branch (e.g. for
+      // callers that already know the source is an LCZ map) instead of
+      // relying solely on the value-range heuristic.
+      const hex = getLCZColor(Math.min(17, Math.max(1, v)))
       px[pi] = parseInt(hex.slice(1, 3), 16)
       px[pi + 1] = parseInt(hex.slice(3, 5), 16)
       px[pi + 2] = parseInt(hex.slice(5, 7), 16)
@@ -99,9 +109,10 @@ export async function cogToImageData(
 export async function createCOGCanvas(
   source: string | File,
   maxWidth = 1024,
-  maxHeight = 1024
+  maxHeight = 1024,
+  options: COGRenderOptions = {}
 ): Promise<{ canvas: HTMLCanvasElement; bounds: [[number, number], [number, number]] }> {
-  const { imageData, bounds, width, height } = await cogToImageData(source, maxWidth, maxHeight)
+  const { imageData, bounds, width, height } = await cogToImageData(source, maxWidth, maxHeight, options)
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
@@ -113,9 +124,10 @@ export async function createCOGCanvas(
 export async function addGeoTIFFToMap(
   source: string | File,
   layerId: string,
-  map: maplibregl.Map
+  map: maplibregl.Map,
+  options: COGRenderOptions = {}
 ): Promise<{ bounds: [[number, number], [number, number]] }> {
-  const { canvas, bounds } = await createCOGCanvas(source)
+  const { canvas, bounds } = await createCOGCanvas(source, 1024, 1024, options)
   const dataUrl = canvas.toDataURL('image/png')
 
   const [[west, south], [east, north]] = bounds

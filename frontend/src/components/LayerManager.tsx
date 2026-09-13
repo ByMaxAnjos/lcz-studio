@@ -105,7 +105,7 @@ export const LayerManager: React.FC = () => {
           // back to decoding straight from the in-memory buffer. Works fine
           // for smaller rasters or ones that already have overviews.
           const arrayBuffer = await file.arrayBuffer()
-          const { bounds } = await addGeoTIFFToMap(arrayBuffer, layerId, map)
+          const { bounds } = await addGeoTIFFToMap(file, layerId, map)
 
           rasterLayer = {
             id: layerId,
