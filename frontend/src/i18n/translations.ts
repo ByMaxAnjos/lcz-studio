@@ -24,8 +24,8 @@ const en = {
   appSubtitle: 'Urban Climate Analysis Platform',
 
   // Workspaces
-  generalWorkspace: 'General',
-  localWorkspace: 'Local',
+  generalWorkspace: 'General Functions',
+  localWorkspace: 'Local Functions',
 
   // Toolbar
   toggleSidebar: 'Toggle sidebar',
@@ -475,8 +475,8 @@ const en = {
 const pt: typeof en = {
   appName: 'LCZ Studio',
   appSubtitle: 'Plataforma de Análise Climática Urbana',
-  generalWorkspace: 'Geral',
-  localWorkspace: 'Local',
+  generalWorkspace: 'Funções Gerais',
+  localWorkspace: 'Funções Locais',
   toggleSidebar: 'Alternar barra lateral',
   saveProject: 'Salvar projeto',
   loadProject: 'Abrir projeto',
@@ -882,8 +882,8 @@ const pt: typeof en = {
 const es: typeof en = {
   appName: 'LCZ Studio',
   appSubtitle: 'Plataforma de Análisis Climático Urbano',
-  generalWorkspace: 'General',
-  localWorkspace: 'Local',
+  generalWorkspace: 'Funciones Generales',
+  localWorkspace: 'Funciones Locales',
   toggleSidebar: 'Alternar barra lateral',
   saveProject: 'Guardar proyecto',
   loadProject: 'Abrir proyecto',
@@ -1289,8 +1289,8 @@ const es: typeof en = {
 const zh: typeof en = {
   appName: 'LCZ Studio',
   appSubtitle: '城市气候分析平台',
-  generalWorkspace: '通用',
-  localWorkspace: '本地',
+  generalWorkspace: '通用功能',
+  localWorkspace: '本地功能',
   toggleSidebar: '切换侧边栏',
   saveProject: '保存项目',
   loadProject: '打开项目',
@@ -1696,8 +1696,8 @@ const zh: typeof en = {
 const fr: typeof en = {
   appName: 'LCZ Studio',
   appSubtitle: 'Plateforme d\'analyse climatique urbaine',
-  generalWorkspace: 'Général',
-  localWorkspace: 'Local',
+  generalWorkspace: 'Fonctions Générales',
+  localWorkspace: 'Fonctions Locales',
   toggleSidebar: 'Basculer la barre laterale',
   saveProject: 'Enregistrer le projet',
   loadProject: 'Ouvrir le projet',
@@ -2106,8 +2106,8 @@ const de: typeof en = {
   appSubtitle: 'Plattform für urbane Klimaanalyse',
 
   // Workspaces
-  generalWorkspace: 'Allgemein',
-  localWorkspace: 'Lokal',
+  generalWorkspace: 'Allgemeine Funktionen',
+  localWorkspace: 'Lokale Funktionen',
 
   // Toolbar
   toggleSidebar: 'Seitenleiste umschalten',
@@ -2560,8 +2560,8 @@ const ja: typeof en = {
   appSubtitle: '都市気候解析プラットフォーム',
 
   // Workspaces
-  generalWorkspace: '全般',
-  localWorkspace: 'ローカル',
+  generalWorkspace: '一般機能',
+  localWorkspace: 'ローカル機能',
 
   // Toolbar
   toggleSidebar: 'サイドバーの表示切替',
@@ -3014,8 +3014,8 @@ const ko: typeof en = {
   appSubtitle: '도시 기후 분석 플랫폼',
 
   // Workspaces
-  generalWorkspace: '일반',
-  localWorkspace: '로컬',
+  generalWorkspace: '일반 기능',
+  localWorkspace: '로컬 기능',
 
   // Toolbar
   toggleSidebar: '사이드바 전환',
@@ -3468,8 +3468,8 @@ const ar: typeof en = {
   appSubtitle: 'منصة تحليل المناخ الحضري',
 
   // Workspaces
-  generalWorkspace: 'عام',
-  localWorkspace: 'محلي',
+  generalWorkspace: 'الوظائف العامة',
+  localWorkspace: 'الوظائف المحلية',
 
   // Toolbar
   toggleSidebar: 'إظهار/إخفاء الشريط الجانبي',
@@ -3922,8 +3922,8 @@ const ru: typeof en = {
   appSubtitle: 'Платформа анализа городского климата',
 
   // Workspaces
-  generalWorkspace: 'Общий',
-  localWorkspace: 'Локальный',
+  generalWorkspace: 'Общие функции',
+  localWorkspace: 'Локальные функции',
 
   // Toolbar
   toggleSidebar: 'Показать/скрыть боковую панель',
@@ -4375,8 +4375,8 @@ const hi: typeof en = {
   appSubtitle: 'शहरी जलवायु विश्लेषण प्लेटफ़ॉर्म',
 
   // Workspaces
-  generalWorkspace: 'सामान्य',
-  localWorkspace: 'स्थानीय',
+  generalWorkspace: 'सामान्य फ़ंक्शन',
+  localWorkspace: 'स्थानीय फ़ंक्शन',
 
   // Toolbar
   toggleSidebar: 'साइडबार टॉगल करें',
