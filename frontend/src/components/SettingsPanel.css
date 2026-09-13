@@ -1,0 +1,191 @@
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(22, 39, 21, 0.3);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: settingsFadeIn 0.2s var(--ease);
+}
+
+@keyframes settingsFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.settings-panel {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 249, 242, 0.94));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 480px;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 4rem);
+  overflow-y: auto;
+  animation: settingsSlideIn 0.25s var(--ease);
+}
+
+@keyframes settingsSlideIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem 0;
+}
+
+.settings-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--brand);
+}
+
+.settings-close {
+  width: 32px;
+  height: 32px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--text-weak);
+  transition: all 0.2s var(--ease);
+}
+
+.settings-close:hover {
+  background: rgba(45, 80, 22, 0.08);
+  color: var(--text);
+}
+
+.settings-close svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.settings-body {
+  padding: 1rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.settings-section h3 {
+  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-weak);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.75rem;
+}
+
+.settings-field:last-child {
+  margin-bottom: 0;
+}
+
+.settings-field label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.settings-field input,
+.settings-field select,
+.settings-field textarea {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.88rem;
+  color: var(--text);
+  transition: border-color 0.2s var(--ease);
+}
+
+.settings-field input:focus,
+.settings-field select:focus,
+.settings-field textarea:focus {
+  border-color: rgba(76, 175, 80, 0.4);
+  outline: none;
+}
+
+.settings-field textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.settings-about {
+  background: rgba(45, 80, 22, 0.04);
+  border: 1px solid rgba(45, 80, 22, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+}
+
+.settings-about p {
+  margin: 0 0 0.3rem;
+}
+
+.settings-about-text {
+  font-size: 0.82rem;
+  color: var(--text-weak);
+  line-height: 1.45;
+}
+
+.settings-about-version {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+}
+
+/* Theme selector */
+.theme-selector {
+  display: flex;
+  gap: 6px;
+}
+
+.theme-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0.6rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  font-size: 0.78rem;
+  color: var(--text-weak);
+}
+
+.theme-option:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: var(--border-strong);
+}
+
+.theme-option.active {
+  background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.35);
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.theme-icon {
+  font-size: 1.1rem;
+}
