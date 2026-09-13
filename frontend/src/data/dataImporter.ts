@@ -15,6 +15,35 @@ export interface ImportResult {
   message: string
 }
 
+/** Split one CSV line into fields, respecting double-quoted fields (which may contain commas or escaped ""). */
+function parseCSVLine(line: string): string[] {
+  const fields: string[] = []
+  let current = ''
+  let inQuotes = false
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i]
+    if (inQuotes) {
+      if (c === '"' && line[i + 1] === '"') {
+        current += '"'
+        i++
+      } else if (c === '"') {
+        inQuotes = false
+      } else {
+        current += c
+      }
+    } else if (c === '"') {
+      inQuotes = true
+    } else if (c === ',') {
+      fields.push(current.trim())
+      current = ''
+    } else {
+      current += c
+    }
+  }
+  fields.push(current.trim())
+  return fields
+}
+
 export async function importCSV(file: File): Promise<ImportResult> {
   try {
     const text = await file.text()
@@ -28,12 +57,12 @@ export async function importCSV(file: File): Promise<ImportResult> {
       }
     }
 
-    const headers = lines[0].split(',').map((h) => h.trim().replace(/^"|"$/g, ''))
+    const headers = parseCSVLine(lines[0])
     const data: any[] = []
 
     for (let i = 1; i < lines.length; i++) {
       if (!lines[i].trim()) continue
-      const values = lines[i].split(',').map((v) => v.trim().replace(/^"|"$/g, ''))
+      const values = parseCSVLine(lines[i])
       const row: any = {}
       for (let j = 0; j < headers.length; j++) {
         const v = values[j]

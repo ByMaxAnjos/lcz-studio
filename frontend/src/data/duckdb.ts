@@ -1,5 +1,16 @@
 import * as duckdb from '@duckdb/duckdb-wasm'
 
+const SAFE_IDENTIFIER = /^[A-Za-z_][A-Za-z0-9_]*$/
+
+/** Validate a table/column name before it is interpolated into SQL. Throws if unsafe. */
+export function assertSafeIdentifier(name: string): void {
+  if (!SAFE_IDENTIFIER.test(name)) {
+    throw new Error(`Unsafe SQL identifier: "${name}"`)
+  }
+}
+
+const SAFE_AGGREGATIONS = ['count', 'sum', 'avg', 'min', 'max'] as const
+
 let db: duckdb.AsyncDuckDB | null = null
 let conn: duckdb.AsyncDuckDBConnection | null = null
 let spatialLoaded = false
@@ -71,6 +82,7 @@ export async function executeSQLQuery(sql: string): Promise<any[]> {
 }
 
 export async function loadCSV(name: string, csvText: string): Promise<void> {
+  assertSafeIdentifier(name)
   if (!conn) await initializeDuckDB()
   // Use registerFileText for in-memory CSV
   await db!.registerFileText(`${name}.csv`, csvText)
@@ -84,6 +96,7 @@ export async function loadCSV(name: string, csvText: string): Promise<void> {
 }
 
 export async function loadGeoJSON(name: string, geojson: GeoJSON.FeatureCollection): Promise<void> {
+  assertSafeIdentifier(name)
   if (!conn) await initializeDuckDB()
 
   try {
@@ -121,7 +134,7 @@ export async function validateStationData(data: any[]): Promise<{ valid: boolean
     if (!(col in firstRow)) errors.push(`Missing required column: ${col}`)
   }
 
-  for (const row of data.slice(0, 10)) {
+  for (const row of data) {
     if (!row.date) errors.push('Invalid date value')
     if (typeof row.lat !== 'number' || typeof row.lon !== 'number') {
       errors.push('Invalid latitude or longitude')
@@ -135,6 +148,7 @@ export async function querySpatialData(
   table: string,
   bounds: [[number, number], [number, number]]
 ): Promise<any[]> {
+  assertSafeIdentifier(table)
   if (!conn) await initializeDuckDB()
   const [[minLon, minLat], [maxLon, maxLat]] = bounds
   const result = await conn!.query(`
@@ -151,6 +165,12 @@ export async function aggregateByLCZ(
   valueColumn: string,
   aggregation: 'sum' | 'avg' | 'count' | 'min' | 'max' = 'avg'
 ): Promise<any[]> {
+  assertSafeIdentifier(table)
+  assertSafeIdentifier(lczColumn)
+  assertSafeIdentifier(valueColumn)
+  if (!SAFE_AGGREGATIONS.includes(aggregation)) {
+    throw new Error(`Unsafe aggregation function: "${aggregation}"`)
+  }
   if (!conn) await initializeDuckDB()
   const result = await conn!.query(`
     SELECT ${lczColumn}, ${aggregation}(${valueColumn}) as value
