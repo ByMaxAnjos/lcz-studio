@@ -117,13 +117,24 @@ export const Toolbar: React.FC = () => {
         </button>
         <div className="toolbar-brand" aria-label={t('appName')}>
           <span className="toolbar-brand-mark" aria-hidden="true">
-            {/* Concentric isotherms around a warm urban core — the classic
-                urban heat island / LCZ temperature-profile motif. */}
+            {/* Off-center, irregular heat-blob contours (isotherms), not
+                concentric circles — reads as a heat-island patch, not a target. */}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="9" strokeWidth="1.1" opacity="0.55" />
-              <circle cx="12" cy="12" r="6" strokeWidth="1.3" opacity="0.8" />
-              <circle cx="12" cy="12" r="3" strokeWidth="1.6" />
-              <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+              <path
+                d="M4 13c-1-4 2-8 7-8.7 5-.7 9.3 1.7 9.6 6 .3 4-2.3 8.3-7 9-4.5.7-8.6-2-9.6-6.3Z"
+                strokeWidth="1.1"
+                opacity="0.5"
+              />
+              <path
+                d="M8 10.5c-.3-2.5 1.7-4.5 4.5-4.7 2.8-.2 4.8 1.7 5.3 4.1.5 2.4-1 5.1-3.8 5.6-2.9.5-5.7-2.1-6-5Z"
+                strokeWidth="1.3"
+                opacity="0.8"
+              />
+              <path
+                d="M10.5 9c-.2-1.2 1-2.3 2.5-2.4 1.5-.1 2.6 1 2.8 2.2.2 1.3-.8 2.6-2.2 2.9-1.5.3-2.9-1.3-3.1-2.7Z"
+                strokeWidth="0"
+                fill="currentColor"
+              />
             </svg>
           </span>
           <h1 className="app-title">{t('appName')}</h1>
