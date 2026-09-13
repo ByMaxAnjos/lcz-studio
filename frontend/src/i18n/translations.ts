@@ -89,6 +89,7 @@ const en = {
   // Sidebar Categories
   categoryData: 'Data',
   categoryAnalysis: 'Analysis',
+  categoryExtraction: 'Extraction',
   categoryClimate: 'Climate',
   categoryInterpolation: 'Interpolation',
   categorySystem: 'System',
@@ -534,6 +535,7 @@ const pt: typeof en = {
   settingsAboutDescription: 'Uma plataforma GIS nativa em nuvem para análise de Zonas Climáticas Locais, construída sobre LCZ4py.',
   categoryData: 'Dados',
   categoryAnalysis: 'Análise',
+  categoryExtraction: 'Extração',
   categoryClimate: 'Clima',
   categoryInterpolation: 'Interpolação',
   categorySystem: 'Sistema',
@@ -941,6 +943,7 @@ const es: typeof en = {
   settingsAboutDescription: 'Una plataforma GIS nativa en la nube para análisis de Zonas Climaticas Locales, construida sobre LCZ4py.',
   categoryData: 'Datos',
   categoryAnalysis: 'Análisis',
+  categoryExtraction: 'Extracción',
   categoryClimate: 'Clima',
   categoryInterpolation: 'Interpolación',
   categorySystem: 'Sistema',
@@ -1348,6 +1351,7 @@ const zh: typeof en = {
   settingsAboutDescription: '基于 LCZ4py 构建的云原生 GIS 局地气候区分析平台。',
   categoryData: '数据',
   categoryAnalysis: '分析',
+  categoryExtraction: '提取',
   categoryClimate: '气候',
   categoryInterpolation: '插值',
   categorySystem: '系统',
@@ -1753,6 +1757,7 @@ const fr: typeof en = {
   settingsAboutDescription: 'Une plateforme GIS native cloud pour l\'analyse des Zones Climatiques Locales, construite sur LCZ4py.',
   categoryData: 'Donnees',
   categoryAnalysis: 'Analyse',
+  categoryExtraction: 'Extraction',
   categoryClimate: 'Climat',
   categoryInterpolation: 'Interpolation',
   categorySystem: 'Systeme',
@@ -2171,6 +2176,7 @@ const de: typeof en = {
   // Sidebar Categories
   categoryData: 'Daten',
   categoryAnalysis: 'Analyse',
+  categoryExtraction: 'Extraktion',
   categoryClimate: 'Klima',
   categoryInterpolation: 'Interpolation',
   categorySystem: 'System',
@@ -2625,6 +2631,7 @@ const ja: typeof en = {
   // Sidebar Categories
   categoryData: 'データ',
   categoryAnalysis: '解析',
+  categoryExtraction: '抽出',
   categoryClimate: '気候',
   categoryInterpolation: '補間',
   categorySystem: 'システム',
@@ -3079,6 +3086,7 @@ const ko: typeof en = {
   // Sidebar Categories
   categoryData: '데이터',
   categoryAnalysis: '분석',
+  categoryExtraction: '추출',
   categoryClimate: '기후',
   categoryInterpolation: '보간',
   categorySystem: '시스템',
@@ -3533,6 +3541,7 @@ const ar: typeof en = {
   // Sidebar Categories
   categoryData: 'البيانات',
   categoryAnalysis: 'التحليل',
+  categoryExtraction: 'الاستخراج',
   categoryClimate: 'المناخ',
   categoryInterpolation: 'الاستيفاء المكاني',
   categorySystem: 'النظام',
@@ -3987,6 +3996,7 @@ const ru: typeof en = {
   // Sidebar Categories
   categoryData: 'Данные',
   categoryAnalysis: 'Анализ',
+  categoryExtraction: 'Извлечение',
   categoryClimate: 'Климат',
   categoryInterpolation: 'Интерполяция',
   categorySystem: 'Система',
@@ -4440,6 +4450,7 @@ const hi: typeof en = {
   // Sidebar Categories
   categoryData: 'डेटा',
   categoryAnalysis: 'विश्लेषण',
+  categoryExtraction: 'निष्कर्षण',
   categoryClimate: 'जलवायु',
   categoryInterpolation: 'इंटरपोलेशन',
   categorySystem: 'सिस्टम',
