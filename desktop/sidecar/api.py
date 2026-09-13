@@ -16,6 +16,7 @@ import shutil
 import sys
 import tempfile
 import uuid
+import typing
 from collections import OrderedDict
 from pathlib import Path
 from typing import Any, Optional
@@ -35,6 +36,7 @@ import plotly.graph_objects as go
 from fastapi import FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
+from starlette.concurrency import run_in_threadpool
 import uvicorn
 
 try:
@@ -46,6 +48,9 @@ try:
     import geopandas as gpd
 except Exception:
     gpd = None
+
+import rasterio
+from rasterio.shutil import copy as rio_copy
 
 # ---------------------------------------------------------------------------
 # Load the real LCZ4py package
@@ -154,6 +159,14 @@ _PARAM_KIND_OVERRIDES: dict[tuple[str, str], str] = {
 
 _SECRET_PARAMS = {"cds_key", "earthdata_pass", "password", "token", "api_key"}
 _DATE_PARAMS = {"start_date", "end_date", "ref_start", "ref_end", "start", "end"}
+# year/month/day/hour are un-annotated on several LCZ4py functions. Left as
+# 'text', a single value like "2020" is sent as a raw string; LCZ4py's shared
+# time-filter helper does `[int(y) for y in (year if hasattr(year, '__iter__')
+# else [year])]` — a str IS iterable, silently splitting "2020" into
+# [2, 0, 2, 0]. Force these to a numeric multi-value kind and always coerce
+# to a list of int (see _coerce_value) so the shared helper never sees a bare
+# string.
+_MULTI_INT_PARAMS = {"year", "month", "day", "hour"}
 
 # Function name -> import name required at call time, for functions gated on
 # optional heavy/credentialed dependencies not installed by default.
@@ -236,6 +249,8 @@ def _input_kind(fn_name: str, param_name: str, annotation: str, default: Any) ->
     lower_name = param_name.lower()
     if lower_name in _SECRET_PARAMS or any(token in lower_name for token in ("password", "secret", "token")):
         return "secret"
+    if param_name in _MULTI_INT_PARAMS:
+        return "number"
     if param_name in _DATE_PARAMS or "timestamp" in lower_annotation or "datetime" in lower_annotation:
         return "date"
     if param_name in {"data_frame", "df"} or "dataframe" in lower_annotation:
@@ -329,6 +344,16 @@ def serialize_result(value: Any) -> Any:
                 ".csv": "csv_path", ".geojson": "geojson_path", ".gpkg": "geojson_path",
             }.get(ext, "file_path")
             return {key: abs_value}
+        # Some functions (e.g. lcz_plot_map(renderer="maplibre")) return raw
+        # HTML markup as a string instead of writing it to a file themselves.
+        # Detect and persist it the same way, so the frontend gets a path it
+        # already knows how to render instead of the HTML source as text.
+        stripped = value.lstrip()[:200].lower()
+        if stripped.startswith("<!doctype html") or stripped.startswith("<html"):
+            path = str(OUTPUT_DIR / f"inline_{uid()}.html")
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(value)
+            return {"html_path": path}
         return {"value": value}
 
     if isinstance(value, np.generic):
@@ -377,6 +402,16 @@ def serialize_result(value: Any) -> Any:
         return {"csv_path": path, "n_rows": len(value), "columns": list(value.columns)}
 
     if dataclasses.is_dataclass(value) and not isinstance(value, type):
+        saved_path = getattr(value, "path", None)
+        if saved_path:
+            payload = serialize_result(saved_path)
+            array = getattr(value, "array", None)
+            if isinstance(array, np.ndarray):
+                payload["shape"] = list(array.shape)
+                payload["dtype"] = str(array.dtype)
+            return payload
+
+    if dataclasses.is_dataclass(value) and not isinstance(value, type):
         return {
             field.name: serialize_result(getattr(value, field.name))
             for field in dataclasses.fields(value)
@@ -401,7 +436,7 @@ def _require_import_ok() -> None:
         raise HTTPException(status_code=503, detail=f"LCZ4py failed to import: {LCZ_IMPORT_ERROR}")
 
 
-def _coerce_value(name: str, value: Any, annotation: str) -> Any:
+def _coerce_value(name: str, value: Any, annotation: str, kind: str = "") -> Any:
     if isinstance(value, dict) and "__lcz_result_id" in value:
         result_id = str(value["__lcz_result_id"])
         if result_id not in _RESULT_REGISTRY:
@@ -411,8 +446,13 @@ def _coerce_value(name: str, value: Any, annotation: str) -> Any:
     if value is None:
         return None
 
+    if name in _MULTI_INT_PARAMS:
+        if isinstance(value, (list, tuple)):
+            return [int(v) for v in value]
+        return [int(value)]
+
     lower_annotation = annotation.lower()
-    if name in {"data_frame", "df"} or ("dataframe" in lower_annotation and "geodataframe" not in lower_annotation):
+    if kind == "dataframe" or name in {"data_frame", "df"} or ("dataframe" in lower_annotation and "geodataframe" not in lower_annotation):
         if isinstance(value, list):
             return pd.DataFrame(value)
         if isinstance(value, str) and os.path.isfile(value):
@@ -420,7 +460,11 @@ def _coerce_value(name: str, value: Any, annotation: str) -> Any:
                 return pd.read_parquet(value)
             return pd.read_csv(value)
 
-    if ("geodataframe" in lower_annotation or name in {"roi", "grid", "stations"}) and isinstance(value, str):
+    # 'kind' (derived from the catalog's own per-parameter metadata, e.g. the
+    # lcz_get_ucp/stations override above) takes priority over this name-based
+    # heuristic — otherwise a param the catalog already declared kind='dataframe'
+    # gets forced through gpd.read_file() anyway and breaks on a plain CSV.
+    if kind != "dataframe" and ("geodataframe" in lower_annotation or name in {"roi", "grid", "stations"}) and isinstance(value, str):
         if gpd is None:
             raise HTTPException(status_code=424, detail="GeoPandas is required to read this spatial input.")
         return gpd.read_file(value)
@@ -434,15 +478,26 @@ def _coerce_value(name: str, value: Any, annotation: str) -> Any:
     return value
 
 
-def _coerce_kwargs(fn, body: dict) -> dict:
+def _coerce_kwargs(fn, fn_name: str, body: dict) -> dict:
     """Build typed keyword arguments for a catalog function."""
     sig = inspect.signature(fn)
     kwargs = {}
     for name, value in body.items():
-        if name not in sig.parameters:
+        param = sig.parameters.get(name)
+        if param is None:
             continue
-        annotation = str(sig.parameters[name].annotation)
-        kwargs[name] = _coerce_value(name, value, annotation)
+        annotation = str(param.annotation)
+        default = param.default if param.default is not inspect.Parameter.empty else None
+        kind = _input_kind(fn_name, name, annotation, default)
+        try:
+            kwargs[name] = _coerce_value(name, value, annotation, kind)
+        except HTTPException:
+            raise
+        except Exception as exc:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid value for parameter '{name}' of '{fn_name}': {type(exc).__name__}: {exc}",
+            ) from exc
     return kwargs
 
 
@@ -456,6 +511,11 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
+    # geotiff.js (cogHandler.ts) does byte-range fetches and needs to read
+    # these response headers cross-origin to know the file size / range —
+    # without exposing them, fetch() sees them on the wire but JS can't
+    # access them, and the raster silently fails to decode.
+    expose_headers=["Content-Range", "Content-Length", "Accept-Ranges"],
 )
 
 
@@ -496,6 +556,55 @@ async def upload_file(file: UploadFile = File(...)) -> dict:
     return {"success": True, "path": str(dest)}
 
 
+@app.post("/raster/ensure-cog")
+async def ensure_cog(request: Request) -> dict:
+    """Make sure a GeoTIFF has overview pyramids before the frontend tries to
+    render it. geotiff.js (cogHandler.ts) decodes the base image at full
+    resolution before downsampling for preview — for a large, non-tiled or
+    overview-less raster that allocation exceeds the JS typed-array limit and
+    crashes outright, regardless of available RAM. Building a COG (base data
+    untouched, just added reduced-resolution overview levels) fixes this.
+    """
+    body: dict = await request.json()
+    tiff_path = body.get("tiff_path", "")
+    if not tiff_path:
+        raise HTTPException(status_code=400, detail="tiff_path required")
+
+    src = os.path.abspath(tiff_path)
+    if not os.path.isfile(src):
+        raise HTTPException(status_code=404, detail=f"File not found: {src}")
+
+    try:
+        with rasterio.open(src) as ds:
+            has_overviews = bool(ds.overviews(1)) if ds.count else False
+    except Exception as exc:
+        raise HTTPException(status_code=400, detail=f"Not a readable raster: {exc}") from exc
+
+    if has_overviews:
+        return {"success": True, "tiff_path": _ensure_servable(src), "converted": False}
+
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    dest = OUTPUT_DIR / f"{Path(src).stem}_cog.tif"
+    if not dest.exists():
+        try:
+            # CPU/IO-bound and can take minutes for large rasters — run off the
+            # event loop so /health and other requests stay responsive meanwhile.
+            await run_in_threadpool(
+                rio_copy, src, str(dest),
+                driver="COG",
+                COMPRESS="LZW",
+                OVERVIEWS="IGNORE_EXISTING",
+                OVERVIEW_RESAMPLING="NEAREST",
+                BLOCKSIZE=512,
+            )
+        except Exception as exc:
+            if dest.exists():
+                dest.unlink()
+            raise HTTPException(status_code=500, detail=f"COG conversion failed: {exc}") from exc
+
+    return {"success": True, "tiff_path": str(dest), "converted": True}
+
+
 # ---------------------------------------------------------------------------
 # Generic LCZ4py catalog + invoke routes
 # ---------------------------------------------------------------------------
@@ -509,6 +618,15 @@ async def lcz4py_catalog() -> dict:
             sig = inspect.signature(fn)
             doc = inspect.getdoc(fn) or ""
             param_docs = _parse_param_docs(doc)
+            # `from __future__ import annotations` (PEP 563) means
+            # inspect.signature reports a bare alias name (e.g. 'VgModel')
+            # instead of the expanded Literal[...] for postponed annotations.
+            # get_type_hints resolves those to the real type object so Literal
+            # aliases are detected generically, not by hardcoding alias names.
+            try:
+                resolved_hints = typing.get_type_hints(fn, include_extras=True)
+            except Exception:
+                resolved_hints = {}
             params = []
             for pname, p in sig.parameters.items():
                 if pname == "self" or p.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
@@ -517,7 +635,20 @@ async def lcz4py_catalog() -> dict:
                 has_default = p.default is not inspect.Parameter.empty
                 default_is_json = has_default and isinstance(p.default, (str, int, float, bool, type(None)))
                 description = param_docs.get(pname, "")
-                options = _literal_options(annotation) or _doc_options(description)
+                resolved = resolved_hints.get(pname)
+                literal_options = (
+                    [str(v) for v in typing.get_args(resolved)]
+                    if resolved is not None and typing.get_origin(resolved) is typing.Literal
+                    else []
+                )
+                options = literal_options or _literal_options(annotation) or _doc_options(description)
+                kind = _input_kind(name, pname, annotation, p.default if has_default else None)
+                if kind == "text" and options:
+                    # doc-derived/Literal-derived options exist but the
+                    # annotation alone didn't signal a select — upgrade so the
+                    # frontend actually renders the parsed option list instead
+                    # of silently discarding it into a free-text box.
+                    kind = "select"
                 params.append({
                     "name": pname,
                     "annotation": annotation or None,
@@ -525,7 +656,7 @@ async def lcz4py_catalog() -> dict:
                     "default_repr": repr(p.default) if has_default and not default_is_json else None,
                     "has_default": has_default,
                     "required": not has_default,
-                    "kind": _input_kind(name, pname, annotation, p.default if has_default else None),
+                    "kind": kind,
                     "description": description,
                     "options": options,
                 })
@@ -557,9 +688,19 @@ async def lcz4py_invoke(category: str, fn_name: str, request: Request) -> dict:
         raise HTTPException(status_code=424, detail=setup_note)
 
     body: dict = await request.json()
-    kwargs = _coerce_kwargs(fn, body)
+    kwargs = _coerce_kwargs(fn, fn_name, body)
+    if fn_name == "lcz_plot_map":
+        # Preview Coverage must stay raster-first: use the GeoTIFF directly
+        # and avoid optional polygonization outputs that can fail on some
+        # environments without a proper geometry-backed GeoDataFrame path.
+        kwargs["use_geoarrow"] = False
+        kwargs["use_duckdb"] = False
+    if fn_name == "lcz_get_parameters":
+        kwargs["isave"] = True
+        kwargs["istack"] = True
+        kwargs["iselect"] = None
     try:
-        result = fn(**kwargs)
+        result = await run_in_threadpool(fn, **kwargs)
     except HTTPException:
         raise
     except Exception as exc:

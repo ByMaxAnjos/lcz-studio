@@ -2,15 +2,18 @@
 // on localhost:8765. In desktop mode Tauri spawns the sidecar automatically;
 // in web mode the user can start it manually (cd desktop/sidecar && python api.py).
 
-import { invoke } from '@tauri-apps/api/core'
+import { invoke, convertFileSrc } from '@tauri-apps/api/core'
 import { useStore } from '../store/useStore'
 
 const SIDECAR_URL        = 'http://127.0.0.1:8765'
 // A PyInstaller --onefile binary self-extracts on every cold start before the
-// heavy geo import chain (rasterio/fiona/duckdb/datashader) even begins —
-// on a first run (nothing cached, possibly still being scanned by antivirus)
-// this can comfortably exceed 30s, especially on Windows.
-const STARTUP_TIMEOUT_MS = 90_000
+// heavy geo import chain (rasterio/fiona/duckdb/datashader) even begins.
+// Measured: ~216s on a true first-ever run (nothing cached yet), ~20s once
+// the extraction cache is warm. Windows machines under real-time antivirus
+// scanning can plausibly be slower still, so this is a generous ceiling —
+// waitForSidecar() returns as soon as /health responds, so the fast path
+// isn't affected by how high this is set.
+const STARTUP_TIMEOUT_MS = 300_000
 const WEB_DETECT_TIMEOUT = 5_000
 const POLL_INTERVAL_MS   = 800
 
@@ -73,21 +76,39 @@ export async function initializeRSidecar(): Promise<void> {
 
   if (!isTauri()) {
     // Web mode: check if sidecar is already running locally (started manually)
+    store.setSidecarPhase('detecting')
     const ready = await waitForSidecar(WEB_DETECT_TIMEOUT)
     store.setRAvailable(ready)
     store.setRRunning(ready)
+    store.setSidecarPhase(ready ? 'connected' : 'failed')
     return
   }
 
+  store.setSidecarPhase('detecting')
   const rAvailable = await checkRAvailable()
   store.setRAvailable(rAvailable)
-  if (!rAvailable) return
+  if (!rAvailable) {
+    store.setSidecarPhase('failed')
+    return
+  }
 
+  store.setSidecarPhase('starting')
   const started = await startRSidecar()
-  if (!started) return
+  if (!started) {
+    store.setSidecarPhase('failed')
+    return
+  }
 
+  store.setSidecarPhase('waiting')
   const ready = await waitForSidecar()
   store.setRRunning(ready)
+  store.setSidecarPhase(ready ? 'connected' : 'failed')
+}
+
+/** Re-run the sidecar startup check — safe to call while it's still starting
+ *  (start_r_sidecar is a no-op if already spawned) or after a prior timeout. */
+export async function retrySidecarConnection(): Promise<void> {
+  return initializeRSidecar()
 }
 
 // ── HTTP helpers ──────────────────────────────────────────────────────────────
@@ -135,13 +156,29 @@ export async function uploadFile(file: File): Promise<string> {
   return data.path as string
 }
 
+/** Make sure a GeoTIFF has overview pyramids before rendering it — large
+ *  rasters without overviews crash the client-side decoder outright (it has
+ *  to allocate a buffer sized to the full image before downsampling). Builds
+ *  a COG copy via the sidecar (rasterio) if the file doesn't already have one;
+ *  a no-op if it does. Can take minutes for large files. */
+export function ensureCogTiff(tiffPath: string) {
+  return runJob<{ path: string; converted: boolean }>('ensure-cog', 'Preparing raster', async () => {
+    const res = await fetch(`${SIDECAR_URL}/raster/ensure-cog`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tiff_path: tiffPath }),
+    })
+    const data = await parseJsonOrThrow(res)
+    return { path: data.tiff_path as string, converted: Boolean(data.converted) }
+  })
+}
+
 /** Convert a sidecar file path to a URL the browser can load.
  *  Desktop: Tauri asset protocol (serves local files to WebView).
  *  Web: sidecar HTTP endpoint (GET /output/file/{name}). */
 export function filePathToUrl(absPath: string): string {
   if (isTauri()) {
-    const encoded = encodeURIComponent(absPath)
-    return `https://asset.localhost/${encoded}`
+    return convertFileSrc(absPath)
   }
   // Web mode: serve via sidecar HTTP
   const filename = absPath.split('/').pop() ?? absPath
@@ -185,6 +222,27 @@ export interface Lcz4pyFunctionMeta {
   requires_setup: string | null
 }
 
+/** Parse a sidecar JSON response, throwing a legible error for non-2xx
+ *  responses even when the body isn't JSON (e.g. a raw Starlette 500 text
+ *  page raised outside the route's own try/except). Avoids surfacing a
+ *  confusing "Unexpected token" JSON-parse error to the user. */
+async function parseJsonOrThrow(res: Response): Promise<any> {
+  const contentType = res.headers.get('content-type') ?? ''
+  if (res.ok) return res.json()
+
+  if (contentType.includes('application/json')) {
+    const data = await res.json().catch(() => null)
+    if (data?.detail) throw new Error(data.detail)
+  } else {
+    const text = await res.text().catch(() => '')
+    if (text) throw new Error(text)
+  }
+  throw new Error(`HTTP ${res.status}: ${res.statusText}`)
+}
+
+export const PUBLICATION_STYLE_OPTIONS = ['default', 'nature', 'science', 'generic_bw'] as const
+export type PublicationStyle = (typeof PUBLICATION_STYLE_OPTIONS)[number]
+
 let catalogCache: Lcz4pyFunctionMeta[] | null = null
 
 export async function fetchLcz4pyCatalog(force = false): Promise<Lcz4pyFunctionMeta[]> {
@@ -218,8 +276,7 @@ export function runLcz4pyFunction(
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params),
     })
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}: ${res.statusText}`)
+    const data = await parseJsonOrThrow(res)
     return {
       resultId: data.result_id as string,
       result: data.result as Lcz4pyResult,
