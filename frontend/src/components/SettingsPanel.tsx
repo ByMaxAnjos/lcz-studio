@@ -10,6 +10,8 @@ interface SettingsPanelProps {
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
   const {
     language,
+    projectName,
+    setProjectName,
     projectDescription,
     setProjectDescription,
     theme,
@@ -32,6 +34,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
         <div className="settings-body">
           <section className="settings-section">
             <h3>{t('settingsProject')}</h3>
+            <div className="settings-field">
+              <label htmlFor="settings-project-name">{t('projectName')}</label>
+              <input
+                id="settings-project-name"
+                type="text"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+              />
+            </div>
             <div className="settings-field">
               <label htmlFor="settings-project-desc">{t('settingsProjectDescription')}</label>
               <textarea

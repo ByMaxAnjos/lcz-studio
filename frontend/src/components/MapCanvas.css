@@ -2,9 +2,6 @@
   flex: 1;
   display: flex;
   overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  box-shadow: var(--shadow-md);
   background:
     radial-gradient(circle at top left, rgba(14, 165, 233, 0.08), transparent 22%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(240, 246, 238, 0.88));
@@ -17,6 +14,61 @@
     radial-gradient(circle at top left, rgba(227, 242, 253, 0.92), transparent 36%),
     linear-gradient(135deg, rgba(233, 244, 232, 0.9) 0%, rgba(246, 249, 244, 0.96) 100%);
   overflow: hidden;
+}
+
+.map-overlay {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  pointer-events: none;
+}
+
+.map-overlay-top-right {
+  top: 12px;
+  right: 12px;
+  gap: 0.5rem;
+}
+
+.map-overlay-top-left {
+  top: 55px;
+  left: 12px;
+  gap: 0.5rem;
+}
+
+.map-overlay-bottom-left {
+  bottom: 12px;
+  left: 12px;
+}
+
+.map-coordinates {
+  pointer-events: auto;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.map-basemap-select {
+  pointer-events: auto;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.map-basemap-select:hover {
+  background: rgba(255, 255, 255, 0.96);
 }
 
 .map-placeholder {
@@ -65,6 +117,10 @@
   height: 100%;
 }
 
+.maplibregl-ctrl-top-right .maplibregl-ctrl {
+  margin-top: 4px;
+}
+
 .maplibregl-ctrl-group {
   background: rgba(255, 255, 255, 0.86);
   border-radius: 14px;
@@ -83,4 +139,40 @@
 
 .maplibregl-ctrl button:hover {
   background: rgba(45, 80, 22, 0.06);
+}
+
+/* Attribution control - bottom right, visible */
+.maplibregl-ctrl-bottom-right {
+  bottom: 12px !important;
+  right: 12px !important;
+}
+
+.maplibregl-ctrl-attrib {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  font-size: 0.7rem !important;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid var(--border) !important;
+}
+
+.maplibregl-ctrl-attrib a {
+  color: var(--text) !important;
+  font-weight: 500;
+}
+
+.maplibregl-ctrl-attrib a:hover {
+  color: var(--brand) !important;
+  text-decoration: underline;
+}
+
+/* Dark mode attribution */
+.dark .maplibregl-ctrl-attrib {
+  background: rgba(20, 35, 18, 0.9) !important;
+  border-color: var(--border) !important;
+}
+
+.dark .maplibregl-ctrl-attrib a {
+  color: var(--text) !important;
 }

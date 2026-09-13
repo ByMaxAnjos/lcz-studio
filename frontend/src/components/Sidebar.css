@@ -3,14 +3,10 @@
   background:
     radial-gradient(circle at top right, rgba(134, 194, 111, 0.12), transparent 28%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(244, 249, 242, 0.9));
-  border: 1px solid var(--border);
-  border-radius: 22px;
+  border-right: 1px solid var(--border);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
 }
 
 .sidebar-section {
@@ -171,8 +167,67 @@
   padding: 8px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   border-bottom: 1px solid var(--border);
+  overflow-y: auto;
+  max-height: 50vh;
+}
+
+/* Tool category groups */
+.tool-category {
+  display: flex;
+  flex-direction: column;
+}
+
+.tool-category-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-weak);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.2s var(--ease);
+}
+
+.tool-category-header:hover {
+  background: rgba(45, 80, 22, 0.05);
+  color: var(--text);
+}
+
+.tool-category-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tool-category-name {
+  flex: 1;
+  text-align: left;
+}
+
+.tool-category-chevron {
+  font-size: 0.75rem;
+  transition: transform 0.2s var(--ease);
+  color: var(--text-soft);
+}
+
+.tool-category-chevron.open {
+  transform: rotate(180deg);
+}
+
+.tool-category-items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 2px 0 4px;
 }
 
 .getting-started-card {
@@ -260,7 +315,8 @@
   font-weight: 600;
 }
 
-.tool-icon { font-size: 1rem; flex-shrink: 0; }
+.tool-icon { width: 19px; height: 19px; flex-shrink: 0; color: var(--brand); }
+.tool-btn:hover .tool-icon, .tool-btn.active .tool-icon { color: var(--brand-2); }
 .tool-label { flex: 1; }
 
 /* Active panel section */
@@ -275,10 +331,12 @@
 /* Layers section */
 .sidebar-layers {
   flex: 1;
-  min-height: 0;
+  min-height: 180px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
 }
 
 /* Scrollbar styling */

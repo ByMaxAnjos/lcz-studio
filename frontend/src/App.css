@@ -11,13 +11,21 @@
   overflow: hidden;
 }
 
+/* Full-bleed app shell — fills the browser viewport edge to edge instead of
+   floating as a rounded card with a gap around it. */
+.app-frame {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .main-content {
   display: flex;
   flex: 1;
   overflow: hidden;
   position: relative;
-  gap: 12px;
-  padding: 12px;
 }
 
 /* Responsive design */
@@ -44,6 +52,23 @@
 @media (max-width: 480px) {
   .toolbar {
     flex-wrap: wrap;
+    min-height: 48px;
+    padding: 0.36rem 0.48rem;
+    gap: 0.38rem;
+  }
+
+  .toolbar-left,
+  .toolbar-right {
+    min-width: 0;
+  }
+
+  .toolbar-left {
+    flex: 0 0 auto;
+  }
+
+  .toolbar-right {
+    flex: 1 1 auto;
+    gap: 0.28rem;
   }
 
   .toolbar-center {
@@ -52,12 +77,39 @@
   }
 
   .app-title {
-    font-size: 1rem;
+    display: none;
+  }
+
+  .toolbar-brand-mark {
+    width: 28px;
+    height: 28px;
+  }
+
+  .toolbar-icon-btn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .toolbar-right .toolbar-icon-btn:not(.settings-trigger):not(.help-trigger) {
+    display: none;
+  }
+
+  .language-select {
+    width: 116px;
+    height: 30px;
+    padding-left: 0.5rem;
+    padding-right: 1.25rem;
+    font-size: 0.78rem;
   }
 
   .workspace-btn {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
+    flex: 1;
+    padding: 0 0.5rem;
+    font-size: 0.78rem;
+  }
+
+  .workspace-toggle {
+    width: 100%;
   }
 
   .tab-btn {

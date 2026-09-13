@@ -77,8 +77,6 @@ export const Toolbar: React.FC = () => {
     setActiveTool,
     activeTool,
     toggleSidebar,
-    projectName,
-    setProjectName,
     resetProject,
     applyProjectSnapshot,
   } = useStore()
@@ -119,12 +117,6 @@ export const Toolbar: React.FC = () => {
           <span className="toolbar-brand-mark">LCZ</span>
           <h1 className="app-title">{t('appName')}</h1>
         </div>
-        <input
-          className="project-name-input"
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
-          aria-label={t('projectName')}
-        />
       </div>
 
       <div className="toolbar-center">
