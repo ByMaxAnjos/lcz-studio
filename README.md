@@ -1,61 +1,62 @@
 # LCZ Studio
 
-A free and open-source, lightweight, cloud-native GIS platform for visualizing, exploring, and analyzing Urban Climate Zones (LCZ) from the LCZ4r R package. Designed for desktop, web browser, and mobile platforms.
+A free and open-source, cloud-native GIS platform for visualizing, exploring, and analyzing Local Climate Zones (LCZ), built on the [LCZ4py](https://github.com/ipeaGIT/lcz4r) Python package. Runs as a desktop app (macOS, Windows, Linux) or in the browser.
+
+![LCZ Studio screenshot](docs/assets/lcz-studio-screenshot.jpg)
+
+![LCZ Studio demo](docs/assets/lcz-studio-demo.gif)
+
+## 📥 Download
+
+Get the latest desktop build from the [Releases page](https://github.com/ByMaxAnjos/lcz-studio/releases/latest) — no build tools required.
+
+| Platform | Download |
+|----------|----------|
+| 🍎 macOS (Apple Silicon) | [LCZ Studio.dmg](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.1.0/LCZ.Studio_0.1.0_aarch64.dmg) |
+| 🪟 Windows (x64) | [LCZ Studio Setup.exe](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.1.0/LCZ.Studio_0.1.0_x64-setup.exe) |
+| 🐧 Linux (.deb) | [LCZ Studio.deb](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.1.0/LCZ.Studio_0.1.0_amd64.deb) |
+| 🐧 Linux (AppImage) | [LCZ Studio.AppImage](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.1.0/LCZ.Studio_0.1.0_amd64.AppImage) |
+
+**First-run notes** — the app isn't code-signed yet, so each OS will flag it once:
+
+- **macOS**: right-click the app → **Open** → confirm in the dialog (Gatekeeper blocks a plain double-click). Or from Terminal: `xattr -cr "/Applications/LCZ Studio.app"`.
+- **Windows**: SmartScreen may warn about an unrecognized publisher — click **More info → Run anyway**.
+- **Linux**: make the AppImage executable first (`chmod +x LCZ.Studio_0.1.0_amd64.AppImage`) or install the `.deb` with your package manager.
 
 ## 🌍 Overview
 
-LCZ Studio enables urban climate researchers and practitioners to:
+LCZ Studio wraps the full [LCZ4py](https://github.com/ipeaGIT/lcz4r) function catalog — LCZ map generation, urban morphology, canopy parameters, remote sensing, spectral indices, gridded climate/environment data, station time series, thermal anomalies, urban heat island intensity, spatial/ML interpolation, drought indices, and thermal comfort — in one map-first interface. The catalog is introspected live from the installed LCZ4py version, so the UI stays in sync with it automatically.
 
-- **Visualize** Local Climate Zone classifications on interactive maps
-- **Analyze** urban heat island (UHI) intensity and thermal anomalies
-- **Explore** climate parameters and their spatial distribution
-- **Import** geospatial data (CSV, GeoJSON, GeoPackage, Shapefile)
-- **Query** data using in-browser SQL with DuckDB-WASM Spatial
-- **Export** analysis results and visualizations
+- **Visualize** LCZ classifications and any GeoTIFF/GeoJSON layer on an interactive map
+- **Run** any public LCZ4py function through an auto-generated form, no code required
+- **Import** station CSV, GeoJSON, GeoPackage, and Shapefile data
+- **Query** imported data with in-browser SQL via DuckDB-WASM
+- **Export** plots, tables, rasters, and interactive HTML results
 
 ## 🚀 Features
 
-### Core Capabilities
-
-- **Interactive Mapping**: MapLibre GL JS with deck.gl overlays
-- **LCZ Classification**: 17-class color palette with built types and land cover types
-- **Urban Heat Island Analysis**: UHI intensity calculation and visualization
-- **Thermal Anomaly Detection**: Hotspot and coldspot identification
-- **Climate Analysis**: Temperature profiles and trend analysis
-- **Data Management**: Layer management with styling controls
-- **Multilingual UI**: English, Portuguese, Spanish, Chinese
-
-### Data Processing
-
-- **In-Browser Queries**: DuckDB-WASM Spatial for fast geospatial queries
-- **CSV/GeoJSON Import**: Drag-and-drop file upload with validation
-- **Station Data Validation**: Automatic schema checking
-- **Data Aggregation**: Group by LCZ class with statistics
-
-### Visualization
-
-- **LCZ Legend**: Full 17-class legend with descriptions
-- **Statistics Panel**: Area, temperature, and class distribution
-- **Climate Metrics**: Expandable metric cards with trends
-- **Layer Styling**: Customizable colors, opacity, and strokes
-- **Live Preview**: Real-time style updates
+- **Interactive mapping** — MapLibre GL JS, with GeoTIFF/COG rendering (WUDAPT-palette aware for LCZ classes) and drag-and-drop layer management
+- **Full LCZ4py coverage** — every public function across the `general` and `local` modules, exposed automatically via the sidecar's catalog endpoint
+- **In-browser SQL** — DuckDB-WASM Spatial for querying imported station/vector data
+- **11 languages** — English, Português, Español, 中文, Français, Deutsch, 日本語, 한국어, العربية, Русский, हिन्दी (with automatic right-to-left layout for Arabic)
+- **Light, Dark, and Dark Neutral themes**, plus a system-preference option
+- **Project save/load** — a project file captures layers, map state, and settings for later
 
 ## 🏗️ Architecture
 
 ```
 LCZ Studio
-├── Frontend (React + TypeScript)
-│   ├── UI Components (Toolbar, Sidebar, MapCanvas)
-│   ├── Map Integration (MapLibre GL JS + deck.gl)
-│   ├── Data Layer (DuckDB-WASM Spatial)
-│   ├── Analysis Tools (UHI, Thermal Anomaly)
-│   └── State Management (Zustand)
+├── Frontend (React + TypeScript, Vite)
+│   ├── UI (Toolbar, Sidebar, MainWorkspace, LayerManager, Settings)
+│   ├── Map (MapLibre GL JS + GeoTIFF/COG rendering)
+│   ├── Data (DuckDB-WASM Spatial, CSV/GeoJSON/GeoPackage/Shapefile import)
+│   ├── LCZ4py Browser (renders a form from the sidecar's live function catalog)
+│   ├── i18n (11 languages)
+│   └── State (Zustand)
 ├── Desktop (Tauri v2 + Rust)
-│   ├── Window Management
-│   ├── File System Access
-│   └── Native Integration
-└── Backend (Python sidecar, FastAPI)
-    └── LCZ4py functions (Python port of the LCZ4r R package)
+│   └── Bundles the frontend + Python sidecar into a native app
+└── Sidecar (Python, FastAPI)
+    └── Introspects and executes LCZ4py functions on request
 ```
 
 ## 📋 Tech Stack
@@ -63,10 +64,10 @@ LCZ Studio
 | Layer | Technology | Purpose |
 |-------|-----------|---------|
 | **UI** | React 18, TypeScript, plain CSS | User interface |
-| **Map** | MapLibre GL JS, deck.gl | Interactive mapping |
+| **Map** | MapLibre GL JS | Interactive mapping, GeoTIFF/COG rendering |
 | **Data** | DuckDB-WASM Spatial | In-browser SQL queries |
 | **Desktop** | Tauri v2, Rust | Cross-platform desktop app |
-| **Backend** | Python (FastAPI) + LCZ4py | LCZ analysis sidecar |
+| **Analysis** | Python (FastAPI) + LCZ4py | LCZ analysis sidecar |
 | **State** | Zustand | State management |
 | **Build** | Vite, npm workspaces | Build tooling |
 
@@ -75,290 +76,126 @@ LCZ Studio
 ```
 lcz-studio/
 ├── frontend/                 # React + TypeScript frontend
-│   ├── src/
-│   │   ├── components/       # React components
-│   │   ├── store/            # Zustand state management
-│   │   ├── map/              # MapLibre & deck.gl integration
-│   │   ├── data/             # DuckDB & data import
-│   │   ├── analysis/         # UHI & thermal analysis
-│   │   ├── utils/            # Utilities (LCZ palette, etc)
-│   │   ├── i18n/             # Translations
-│   │   ├── App.tsx           # Main component
-│   │   └── index.css         # Global styles
-│   ├── package.json
-│   ├── vite.config.ts
-│   └── tsconfig.json
-├── desktop/                  # Tauri v2 desktop app
-│   ├── src-tauri/
-│   │   ├── src/              # Rust code
-│   │   ├── Cargo.toml
-│   │   └── tauri.conf.json
-│   ├── package.json
-│   └── README.md
-├── package.json              # Root monorepo config
-└── README.md                 # This file
+│   └── src/
+│       ├── components/        # UI components (Toolbar, Sidebar, MapCanvas, LayerManager, Lcz4pyBrowserPanel, Settings...)
+│       ├── store/             # Zustand state management
+│       ├── map/                # MapLibre integration + GeoTIFF/COG handling
+│       ├── data/               # DuckDB-WASM + file import
+│       ├── services/           # Sidecar client (catalog + function invocation)
+│       ├── i18n/                # Translations (11 languages)
+│       └── utils/               # LCZ palette, per-parameter help text, etc.
+├── desktop/                   # Tauri v2 desktop app
+│   ├── src-tauri/               # Rust shell
+│   └── sidecar/                 # Python/FastAPI service wrapping LCZ4py
+├── package.json                # Root monorepo config
+└── README.md
 ```
 
-## 📥 Download (End Users)
-
-Prebuilt desktop apps are published on the [GitHub Releases](../../releases) page — no build tools required.
-
-- **macOS**: download the `.dmg`, drag LCZ Studio into Applications. The app is **not code-signed**, so macOS Gatekeeper will initially refuse to open it ("cannot verify developer"). To allow it once: right-click the app → **Open** → confirm in the dialog. Or from Terminal: `xattr -cr "/Applications/LCZ Studio.app"`.
-- **Windows**: download the installer (`.msi` or `.exe`). SmartScreen may warn about an unrecognized publisher — click **More info → Run anyway**.
-- **Linux**: download the `.AppImage` (make it executable: `chmod +x`) or the `.deb`.
-
-## 🚀 Getting Started (Development)
+## 🛠️ Building from Source
 
 ### Prerequisites
 
 - Node.js 18+
-- Rust 1.60+ (for desktop builds)
-- npm or yarn
+- Rust (for desktop builds)
+- Python 3.11+ (for the sidecar)
 
-### Installation
+### Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/lcz-studio.git
+git clone https://github.com/ByMaxAnjos/lcz-studio.git
 cd lcz-studio
-
-# Install dependencies
 npm install
 ```
 
-### Development
-
-#### Web Browser
+### Run in development
 
 ```bash
-cd frontend
-npm run dev
-# Open http://localhost:5173
-```
+# Frontend only, in the browser (http://localhost:1420)
+npm run dev:web
 
-#### Desktop (Tauri)
-
-```bash
-cd desktop
-npm run tauri dev
+# Desktop app (requires the frontend dev server running)
+npm run dev:desktop
 ```
 
 ### Build
 
-#### Web
-
 ```bash
+# Web build → frontend/dist/
 npm run build:web
-# Output: frontend/dist/
-```
 
-#### Desktop
-
-```bash
+# Desktop installers → desktop/src-tauri/target/release/bundle/
 npm run build:desktop
-# Output: desktop/src-tauri/target/release/
 ```
+
+There is no test runner currently configured for this project.
 
 ## 📖 Usage
 
-### Importing Data
-
-1. Click **Add Data** in the sidebar
-2. Drag and drop a CSV or GeoJSON file
-3. Validate the data schema
-4. Data is loaded into DuckDB-WASM Spatial
-
-### Creating Layers
-
-1. Click **➕** in the Layer Manager
-2. Configure layer name and type
-3. Use Layer Styler to customize appearance
-4. Toggle visibility with checkbox
-
-### Analyzing LCZ
-
-1. Select workspace (General or Local)
-2. Choose analysis tool from sidebar
-3. View results in bottom panel
-4. Export or save visualizations
-
-### Climate Analysis
-
-1. Load station data with temperature values
-2. View UHI intensity in Climate Analysis panel
-3. Identify hotspots and coldspots
-4. Generate thermal anomaly report
+1. Choose a workspace in the toolbar: **General Functions** (map-level LCZ4py tools) or **Local Functions** (station-based analysis).
+2. Pick a tool from the sidebar — each opens a form generated straight from the LCZ4py function's real signature.
+3. Import data (CSV, GeoJSON, GeoPackage, or Shapefile) via the Layers panel, or point a tool at a previous result.
+4. Run the function; results render as a map layer, plot, table, or downloadable file depending on what LCZ4py returns.
+5. Save your project from the toolbar to pick up where you left off later.
 
 ## 🌐 Multilingual Support
 
-LCZ Studio supports multiple languages:
+Switch languages from the toolbar's language selector: English, Português, Español, 中文, Français, Deutsch, 日本語, 한국어, العربية, Русский, हिन्दी.
 
-- **English** (en)
-- **Português** (pt) - Brazilian Portuguese
-- **Español** (es) - Spanish
-- **中文** (zh) - Simplified Chinese
+## 📊 Station Data Format
 
-Change language in the toolbar language selector.
-
-## 📊 Data Format
-
-### CSV Format
-
-Required columns for station data:
+Station CSV imports require these columns:
 
 ```csv
-date,station,var,lat,lon,value
-2024-01-01,STATION_A,temperature,23.5505,-46.6333,25.5
-2024-01-01,STATION_B,temperature,23.5505,-46.6333,24.2
+date,station,var,lat,lon
+2024-01-01,Site A,25.3,-23.55,-46.63
+2024-01-02,Site A,22.1,-23.55,-46.63
+2024-01-03,Station B,28.7,-23.60,-46.70
 ```
 
-### GeoJSON Format
-
-```json
-{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-46.6333, 23.5505]
-      },
-      "properties": {
-        "lcz_class": 2,
-        "temperature": 25.5
-      }
-    }
-  ]
-}
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-```bash
-# Frontend
-VITE_MAP_STYLE=https://tiles.openfreemap.org/styles/liberty
-VITE_DEFAULT_CENTER=0,20
-VITE_DEFAULT_ZOOM=2
-VITE_PUBLIC_WEB_APP_URL=https://your-public-lcz-studio-url.example
-
-# Desktop
-RUST_LOG=debug
-```
-
-### Tauri Configuration
-
-Edit `desktop/src-tauri/tauri.conf.json` to customize:
-
-- Window size and appearance
-- Security settings
-- Bundle targets
-- App icons
-
-## 📚 API Reference
-
-### Store (Zustand)
-
-```typescript
-import { useStore } from '@/store/useStore'
-
-const { language, layers, addLayer, updateLayer } = useStore()
-```
-
-### MapLibre Manager
-
-```typescript
-import { mapLibreManager } from '@/map/MapLibreManager'
-
-const map = mapLibreManager.initialize(config)
-mapLibreManager.addRasterLayer(id, sourceId, opacity)
-```
-
-### DuckDB
-
-```typescript
-import { executeSQLQuery, loadGeoJSON } from '@/data/duckdb'
-
-const results = await executeSQLQuery('SELECT * FROM table')
-await loadGeoJSON('features', geojsonData)
-```
-
-### UHI Calculator
-
-```typescript
-import { getUHIIntensity, calculateTemperatureProfile } from '@/analysis/uhiCalculator'
-
-const result = getUHIIntensity({ lczClass: 2, temperature: 25.5, referenceTemperature: 20 })
-```
+`var` holds the numeric value for whatever variable you're analyzing (e.g. temperature); which column to treat as the value is chosen per function.
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
+Contributions are welcome:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT License — see the LICENSE file for details.
 
 ## 🙏 Acknowledgments
 
-- **LCZ4r**: Urban Climate Zone classification for R
-- **MapLibre GL JS**: Open-source mapping library
-- **deck.gl**: Large-scale web-based visualization
-- **DuckDB**: In-process SQL OLAP database
-- **Tauri**: Lightweight cross-platform desktop framework
+- **[LCZ4py](https://github.com/ipeaGIT/lcz4r)** — Local Climate Zone analysis (Python port of LCZ4r)
+- **MapLibre GL JS** — open-source mapping library
+- **DuckDB** — in-process SQL OLAP database
+- **Tauri** — lightweight cross-platform desktop framework
 
 ## 📞 Support
 
-For issues, questions, or suggestions:
-
-- **GitHub Issues**: [Report bugs or request features](https://github.com/yourusername/lcz-studio/issues)
-- **Discussions**: [Ask questions and share ideas](https://github.com/yourusername/lcz-studio/discussions)
-- **Documentation**: [Read the docs](https://lcz-studio.readthedocs.io)
-
-## 🗺️ Roadmap
-
-### v0.2.0 (Q2 2024)
-
-- [ ] R backend integration (LCZ4r)
-- [ ] Advanced styling with data-driven properties
-- [ ] Time series animation
-- [ ] Export to GeoPackage
-
-### v0.3.0 (Q3 2024)
-
-- [ ] Mobile app (iOS/Android)
-- [ ] Cloud storage integration
-- [ ] Collaborative editing
-- [ ] Real-time data streaming
-
-### v1.0.0 (Q4 2024)
-
-- [ ] Production-ready release
-- [ ] Comprehensive documentation
-- [ ] Community plugins system
-- [ ] Commercial support options
+- **Issues**: [Report bugs or request features](https://github.com/ByMaxAnjos/lcz-studio/issues)
+- **Discussions**: [Ask questions and share ideas](https://github.com/ByMaxAnjos/lcz-studio/discussions)
 
 ## 📝 Citation
 
-If you use LCZ Studio in your research, please cite:
+If you use LCZ Studio or LCZ4py in your research, please cite:
 
 ```bibtex
-@software{lcz_studio_2024,
-  title={LCZ Studio: Urban Climate Analysis Platform},
-  author={Your Name},
-  year={2024},
-  url={https://github.com/yourusername/lcz-studio}
+@article{anjos2025lcz4py,
+  title={LCZ4py: A Python package for Local Climate Zone analysis},
+  author={Anjos, Max and others},
+  journal={Scientific Reports},
+  year={2025},
+  doi={10.1038/s41598-025-92000-0}
 }
 ```
 
+Anjos, M. et al. (2025). LCZ4py: A Python package for Local Climate Zone analysis. *Scientific Reports*. https://www.nature.com/articles/s41598-025-92000-0
+
 ---
 
-**Made with ❤️ for urban climate researchers and practitioners**
+**Created by [Max Anjos](https://github.com/ByMaxAnjos)** · Departamento de Geociências, Universidade Federal de Juiz de Fora (UFJF), Brazil
