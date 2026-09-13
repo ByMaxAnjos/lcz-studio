@@ -77,6 +77,14 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                   <span>{t('settingsThemeDark')}</span>
                 </button>
                 <button
+                  className={`theme-option ${theme === 'dark-neutral' ? 'active' : ''}`}
+                  onClick={() => setTheme('dark-neutral')}
+                  type="button"
+                >
+                  <span className="theme-icon">🌑</span>
+                  <span>{t('settingsThemeDarkNeutral')}</span>
+                </button>
+                <button
                   className={`theme-option ${theme === 'system' ? 'active' : ''}`}
                   onClick={() => setTheme('system')}
                   type="button"

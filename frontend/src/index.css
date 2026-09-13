@@ -54,6 +54,27 @@
   --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Second dark variant — neutral gray/black (GitHub Dark-style) instead of the
+   green-tinted default above. Every ".dark ..." rule below already reads
+   these custom properties, so redefining just the tokens (higher specificity
+   via the extra .dark-neutral class) re-themes the whole app with no other
+   changes needed. */
+.dark.dark-neutral {
+  --bg: #0d1117;
+  --bg-deep: #010409;
+  --surface: rgba(22, 27, 34, 0.85);
+  --surface-strong: rgba(33, 38, 45, 0.92);
+  --surface-muted: rgba(22, 27, 34, 0.6);
+  --border: rgba(240, 246, 252, 0.1);
+  --border-strong: rgba(240, 246, 252, 0.18);
+  --text: #e6edf3;
+  --text-weak: #8b949e;
+  --text-soft: #6e7681;
+  --brand: #3fb950;
+  --brand-2: #4caf50;
+  --brand-3: #2ea043;
+}
+
 /* Body */
 .dark body {
   background:
@@ -67,6 +88,14 @@
     linear-gradient(120deg, rgba(76, 175, 80, 0.02), transparent 20%, rgba(76, 175, 80, 0.015) 55%, transparent 82%),
     radial-gradient(circle at 20% 20%, rgba(134, 194, 111, 0.05), transparent 18%),
     radial-gradient(circle at 80% 10%, rgba(76, 175, 80, 0.04), transparent 20%);
+}
+
+.dark.dark-neutral body {
+  background: linear-gradient(180deg, var(--bg) 0%, #0d1117 55%, var(--bg-deep) 100%);
+}
+
+.dark.dark-neutral body::before {
+  background: none;
 }
 
 /* Toolbar */

@@ -59,7 +59,7 @@ export interface AppState {
   projectName: string
   projectDescription: string
   onboardingDismissed: boolean
-  theme: 'light' | 'dark' | 'system'
+  theme: 'light' | 'dark' | 'dark-neutral' | 'system'
 
   // Map State
   layers: Layer[]
@@ -85,7 +85,7 @@ export interface AppState {
   setProjectName: (name: string) => void
   setProjectDescription: (description: string) => void
   dismissOnboarding: () => void
-  setTheme: (theme: 'light' | 'dark' | 'system') => void
+  setTheme: (theme: 'light' | 'dark' | 'dark-neutral' | 'system') => void
 
   // Actions — Map
   setLczMapPath: (path: string | null) => void
@@ -121,7 +121,7 @@ const initialState = {
   projectName: 'Untitled project',
   projectDescription: '',
   onboardingDismissed: false,
-  theme: 'light' as 'light' | 'dark' | 'system',
+  theme: 'light' as 'light' | 'dark' | 'dark-neutral' | 'system',
   lczMapPath: null,
   globeEnabled: false,
   basemapStyle: 'positron' as BasemapStyleId,
@@ -134,13 +134,15 @@ const initialState = {
   activeJobs: [] as RJob[],
 }
 
-function applyTheme(theme: 'light' | 'dark' | 'system'): void {
+function applyTheme(theme: 'light' | 'dark' | 'dark-neutral' | 'system'): void {
   const root = document.documentElement
   if (theme === 'system') {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     root.classList.toggle('dark', prefersDark)
+    root.classList.remove('dark-neutral')
   } else {
-    root.classList.toggle('dark', theme === 'dark')
+    root.classList.toggle('dark', theme === 'dark' || theme === 'dark-neutral')
+    root.classList.toggle('dark-neutral', theme === 'dark-neutral')
   }
 }
 
