@@ -145,7 +145,7 @@ export const HelpCenter: React.FC<HelpCenterProps> = ({ language, onExploreFunct
                 <p>{t('helpCitationText')}</p>
               </div>
             </div>
-            <div className="help-citation-card">
+            <div className="help-citation-card" dir="ltr">
               <p className="help-citation-text">
                 Anjos, M. et al. (2025). LCZ4py: A Python package for Local Climate Zone analysis.
                 <em> Scientific Reports</em>.

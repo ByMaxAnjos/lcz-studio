@@ -1,13 +1,74 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useStore, getProjectSnapshot } from '../store/useStore'
-import { getTranslation } from '../i18n/translations'
+import { getTranslation, LANGUAGES, type Language } from '../i18n/translations'
 import { downloadTextFile, parseProjectFile, projectFilename, readTextFile, serializeProject } from '../utils/project'
+import { SettingsPanel } from './SettingsPanel'
 import './Toolbar.css'
 
 const webAppUrl = import.meta.env.VITE_PUBLIC_WEB_APP_URL as string | undefined
 
+type ToolbarIconName = 'menu' | 'external' | 'save' | 'folder' | 'plus' | 'settings' | 'help'
+
+const ToolbarIcon: React.FC<{ name: ToolbarIconName }> = ({ name }) => {
+  const paths: Record<ToolbarIconName, React.ReactNode> = {
+    menu: (
+      <>
+        <path d="M4 7h16" />
+        <path d="M4 12h16" />
+        <path d="M4 17h16" />
+      </>
+    ),
+    external: (
+      <>
+        <path d="M14 4h6v6" />
+        <path d="M10 14 20 4" />
+        <path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4" />
+      </>
+    ),
+    save: (
+      <>
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
+        <path d="M17 21v-8H7v8" />
+        <path d="M7 3v5h8" />
+      </>
+    ),
+    folder: (
+      <>
+        <path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z" />
+        <path d="M3 10h18" />
+      </>
+    ),
+    plus: (
+      <>
+        <path d="M12 5v14" />
+        <path d="M5 12h14" />
+      </>
+    ),
+    settings: (
+      <>
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z" />
+        <circle cx="12" cy="12" r="3" />
+      </>
+    ),
+    help: (
+      <>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M9.7 9a2.5 2.5 0 0 1 4.8 1c0 2-2.5 2-2.5 4" />
+        <path d="M12 18h.01" />
+      </>
+    ),
+  }
+
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      {paths[name]}
+    </svg>
+  )
+}
+
 export const Toolbar: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const {
     language,
     setLanguage,
@@ -20,11 +81,8 @@ export const Toolbar: React.FC = () => {
     setProjectName,
     resetProject,
     applyProjectSnapshot,
-    rAvailable,
-    rRunning,
   } = useStore()
   const t = (key: Parameters<typeof getTranslation>[1]) => getTranslation(language, key)
-  const engineLabel = rRunning ? t('engineOnline') : rAvailable ? t('engineReady') : t('engineOffline')
 
   const handleSaveProject = () => {
     const snapshot = getProjectSnapshot()
@@ -49,22 +107,24 @@ export const Toolbar: React.FC = () => {
     <>
     <div className="toolbar">
       <div className="toolbar-left">
-        <button 
-          className="toolbar-btn"
+        <button
+          className="toolbar-icon-btn"
           onClick={toggleSidebar}
-          title="Toggle sidebar"
+          title={t('toggleSidebar')}
+          aria-label={t('toggleSidebar')}
         >
-          ☰
+          <ToolbarIcon name="menu" />
         </button>
-        <div className="title-stack">
+        <div className="toolbar-brand" aria-label={t('appName')}>
+          <span className="toolbar-brand-mark">LCZ</span>
           <h1 className="app-title">{t('appName')}</h1>
-          <input
-            className="project-name-input"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-            aria-label={t('projectName')}
-          />
         </div>
+        <input
+          className="project-name-input"
+          value={projectName}
+          onChange={(e) => setProjectName(e.target.value)}
+          aria-label={t('projectName')}
+        />
       </div>
 
       <div className="toolbar-center">
@@ -85,12 +145,9 @@ export const Toolbar: React.FC = () => {
       </div>
 
       <div className="toolbar-right">
-        <span className={`status-pill ${rRunning ? 'running' : rAvailable ? 'ready' : 'offline'}`}>
-          {engineLabel}
-        </span>
         {webAppUrl && (
-          <a className="toolbar-btn toolbar-link-btn" href={webAppUrl} target="_blank" rel="noreferrer" title={t('openWebApp')}>
-            {t('openWebApp')}
+          <a className="toolbar-icon-btn toolbar-link-btn" href={webAppUrl} target="_blank" rel="noreferrer" title={t('openWebApp')} aria-label={t('openWebApp')}>
+            <ToolbarIcon name="external" />
           </a>
         )}
         <input
@@ -106,44 +163,46 @@ export const Toolbar: React.FC = () => {
             }
           }}
         />
-        <button className="toolbar-btn" onClick={handleSaveProject} title={t('saveProject')}>
-          {t('saveProject')}
+        <button className="toolbar-icon-btn" onClick={handleSaveProject} title={t('saveProject')} aria-label={t('saveProject')}>
+          <ToolbarIcon name="save" />
         </button>
-        <button className="toolbar-btn" onClick={handleLoadClick} title={t('loadProject')}>
-          {t('loadProject')}
+        <button className="toolbar-icon-btn" onClick={handleLoadClick} title={t('loadProject')} aria-label={t('loadProject')}>
+          <ToolbarIcon name="folder" />
         </button>
-        <button className="toolbar-btn" onClick={handleProjectReset} title={t('newProject')}>
-          {t('newProject')}
+        <button className="toolbar-icon-btn" onClick={handleProjectReset} title={t('newProject')} aria-label={t('newProject')}>
+          <ToolbarIcon name="plus" />
         </button>
-        <select 
-          value={language} 
-          onChange={(e) => setLanguage(e.target.value as any)}
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value as Language)}
           className="language-select"
         >
-          <option value="en">English</option>
-          <option value="pt">Português</option>
-          <option value="es">Español</option>
-          <option value="zh">中文</option>
+          {LANGUAGES.map(({ id, nativeLabel }) => (
+            <option key={id} value={id}>{nativeLabel}</option>
+          ))}
         </select>
-        
-        <button className="toolbar-btn" title={t('settings')}>
-          ⚙️
+
+        <button
+          className="toolbar-icon-btn settings-trigger"
+          title={t('settings')}
+          aria-label={t('settings')}
+          onClick={() => setSettingsOpen(true)}
+        >
+          <ToolbarIcon name="settings" />
         </button>
-        
-          <button
-          className={`toolbar-btn help-trigger ${activeTool === 'help' ? 'active' : ''}`}
+
+        <button
+          className={`toolbar-icon-btn help-trigger ${activeTool === 'help' ? 'active' : ''}`}
           title={t('help')}
           aria-label={t('help')}
           onClick={() => setActiveTool('help')}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M9.7 9a2.5 2.5 0 0 1 4.8 1c0 2-2.5 2-2.5 4" />
-              <path d="M12 18h.01" />
-            </svg>
-          </button>
+        >
+          <ToolbarIcon name="help" />
+        </button>
       </div>
     </div>
+
+    {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
     </>
   )
 }

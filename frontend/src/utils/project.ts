@@ -1,4 +1,6 @@
 import type { ProjectSnapshot } from '../store/useStore'
+import { BASEMAP_STYLE_IDS, BasemapStyleId } from '../map/MapLibreManager'
+import { LANGUAGES, type Language } from '../i18n/translations'
 
 export interface ProjectFile extends ProjectSnapshot {
   app: 'LCZ Studio'
@@ -22,12 +24,12 @@ export function parseProjectFile(raw: string): ProjectSnapshot {
   }
 
   const version = parsed.version ?? 1
-  if (version !== 1) {
+  if (version !== 1 && version !== 2) {
     throw new Error(`Unsupported project version: ${version}`)
   }
 
   return {
-    version: 1,
+    version: 2,
     projectName: typeof parsed.projectName === 'string' ? parsed.projectName : 'Untitled project',
     projectDescription: typeof parsed.projectDescription === 'string' ? parsed.projectDescription : '',
     language: normalizeLanguage(parsed.language),
@@ -38,6 +40,8 @@ export function parseProjectFile(raw: string): ProjectSnapshot {
     stationData: Array.isArray(parsed.stationData) ? parsed.stationData : null,
     stationFile: typeof parsed.stationFile === 'string' ? parsed.stationFile : null,
     lczMapPath: typeof parsed.lczMapPath === 'string' ? parsed.lczMapPath : null,
+    globeEnabled: Boolean((parsed as Partial<ProjectFile>).globeEnabled),
+    basemapStyle: normalizeBasemapStyle(parsed.basemapStyle),
     activeJobs: Array.isArray(parsed.activeJobs) ? parsed.activeJobs : [],
     onboardingDismissed: Boolean(parsed.onboardingDismissed),
     savedAt: typeof parsed.savedAt === 'string' ? parsed.savedAt : new Date().toISOString(),
@@ -67,6 +71,14 @@ export function projectFilename(name: string) {
   return `${slug}.lczstudio.json`
 }
 
-function normalizeLanguage(language: unknown): 'en' | 'pt' | 'es' | 'zh' {
-  return language === 'pt' || language === 'es' || language === 'zh' ? language : 'en'
+function normalizeLanguage(language: unknown): Language {
+  return typeof language === 'string' && LANGUAGES.some(({ id }) => id === language)
+    ? (language as Language)
+    : 'en'
+}
+
+function normalizeBasemapStyle(style: unknown): BasemapStyleId {
+  return typeof style === 'string' && (BASEMAP_STYLE_IDS as string[]).includes(style)
+    ? (style as BasemapStyleId)
+    : 'positron'
 }

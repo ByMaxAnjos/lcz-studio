@@ -10,9 +10,6 @@ interface SettingsPanelProps {
 export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
   const {
     language,
-    setLanguage,
-    projectName,
-    setProjectName,
     projectDescription,
     setProjectDescription,
     theme,
@@ -35,15 +32,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
         <div className="settings-body">
           <section className="settings-section">
             <h3>{t('settingsProject')}</h3>
-            <div className="settings-field">
-              <label htmlFor="settings-project-name">{t('projectName')}</label>
-              <input
-                id="settings-project-name"
-                type="text"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-              />
-            </div>
             <div className="settings-field">
               <label htmlFor="settings-project-desc">{t('settingsProjectDescription')}</label>
               <textarea
@@ -86,19 +74,6 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                   <span>{t('settingsThemeSystem')}</span>
                 </button>
               </div>
-            </div>
-            <div className="settings-field">
-              <label htmlFor="settings-language">{t('settingsLanguage')}</label>
-              <select
-                id="settings-language"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as 'en' | 'pt' | 'es' | 'zh')}
-              >
-                <option value="en">English</option>
-                <option value="pt">Portugues</option>
-                <option value="es">Espanol</option>
-                <option value="zh">中文</option>
-              </select>
             </div>
           </section>
 

@@ -1,11 +1,13 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import type { BasemapStyleId } from '../map/MapLibreManager'
+import type { Language } from '../i18n/translations'
 
 export interface ProjectSnapshot {
-  version: 1
+  version: 2
   projectName: string
   projectDescription: string
-  language: 'en' | 'pt' | 'es' | 'zh'
+  language: Language
   workspace: 'general' | 'local'
   sidebarOpen: boolean
   activeTool: string | null
@@ -13,6 +15,8 @@ export interface ProjectSnapshot {
   stationData: Record<string, unknown>[] | null
   stationFile: string | null
   lczMapPath: string | null
+  globeEnabled: boolean
+  basemapStyle: BasemapStyleId
   activeJobs: RJob[]
   onboardingDismissed: boolean
   savedAt: string
@@ -26,6 +30,10 @@ export interface Layer {
   opacity: number
   data?: unknown
   sourceFile?: string
+  analysisSourceFile?: string
+  /** Display-only raster styling; source file is left unchanged for analysis. */
+  renderMode?: 'lcz'
+  bounds?: [[number, number], [number, number]]
 }
 
 export interface RJob {
@@ -44,13 +52,14 @@ export interface RJob {
 
 export interface AppState {
   // UI State
-  language: 'en' | 'pt' | 'es' | 'zh'
+  language: Language
   workspace: 'general' | 'local'
   sidebarOpen: boolean
   activeTool: string | null
   projectName: string
   projectDescription: string
   onboardingDismissed: boolean
+  theme: 'light' | 'dark' | 'system'
 
   // Map State
   layers: Layer[]
@@ -59,23 +68,29 @@ export interface AppState {
   stationData: Record<string, unknown>[] | null
   stationFile: string | null   // absolute path for passing to R
   lczMapPath: string | null    // current LCZ map GeoTIFF path
+  globeEnabled: boolean
+  basemapStyle: BasemapStyleId
 
   // R Sidecar State
   rAvailable: boolean
   rRunning: boolean
+  sidecarPhase: 'idle' | 'detecting' | 'starting' | 'waiting' | 'connected' | 'failed'
   activeJobs: RJob[]
 
   // Actions — UI
-  setLanguage: (lang: 'en' | 'pt' | 'es' | 'zh') => void
+  setLanguage: (lang: Language) => void
   setWorkspace: (workspace: 'general' | 'local') => void
   toggleSidebar: () => void
   setActiveTool: (tool: string | null) => void
   setProjectName: (name: string) => void
   setProjectDescription: (description: string) => void
   dismissOnboarding: () => void
+  setTheme: (theme: 'light' | 'dark' | 'system') => void
 
   // Actions — Map
   setLczMapPath: (path: string | null) => void
+  setGlobeEnabled: (enabled: boolean) => void
+  setBasemapStyle: (style: BasemapStyleId) => void
   addLayer: (layer: Layer) => void
   removeLayer: (id: string) => void
   updateLayer: (id: string, updates: Partial<Layer>) => void
@@ -88,6 +103,7 @@ export interface AppState {
   // Actions — R
   setRAvailable: (v: boolean) => void
   setRRunning: (v: boolean) => void
+  setSidecarPhase: (phase: AppState['sidecarPhase']) => void
   addRJob: (job: RJob) => void
   updateRJob: (id: string, updates: Partial<RJob>) => void
   removeRJob: (id: string) => void
@@ -105,18 +121,32 @@ const initialState = {
   projectName: 'Untitled project',
   projectDescription: '',
   onboardingDismissed: false,
+  theme: 'light' as 'light' | 'dark' | 'system',
   lczMapPath: null,
+  globeEnabled: false,
+  basemapStyle: 'positron' as BasemapStyleId,
   layers: [] as Layer[],
   stationData: null as Record<string, unknown>[] | null,
   stationFile: null,
   rAvailable: false,
   rRunning: false,
+  sidecarPhase: 'idle' as AppState['sidecarPhase'],
   activeJobs: [] as RJob[],
+}
+
+function applyTheme(theme: 'light' | 'dark' | 'system'): void {
+  const root = document.documentElement
+  if (theme === 'system') {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    root.classList.toggle('dark', prefersDark)
+  } else {
+    root.classList.toggle('dark', theme === 'dark')
+  }
 }
 
 function buildSnapshot(state: AppState): ProjectSnapshot {
   return {
-    version: 1,
+    version: 2,
     projectName: state.projectName.trim() || 'Untitled project',
     projectDescription: state.projectDescription,
     language: state.language,
@@ -127,6 +157,8 @@ function buildSnapshot(state: AppState): ProjectSnapshot {
     stationData: state.stationData,
     stationFile: state.stationFile,
     lczMapPath: state.lczMapPath,
+    globeEnabled: state.globeEnabled,
+    basemapStyle: state.basemapStyle,
     activeJobs: state.activeJobs,
     onboardingDismissed: state.onboardingDismissed,
     savedAt: new Date().toISOString(),
@@ -146,9 +178,15 @@ export const useStore = create<AppState>()(
       setProjectName: (name) => set({ projectName: name }),
       setProjectDescription: (description) => set({ projectDescription: description }),
       dismissOnboarding: () => set({ onboardingDismissed: true }),
+      setTheme: (theme) => {
+        set({ theme })
+        applyTheme(theme)
+      },
 
       // Map actions
       setLczMapPath: (path) => set({ lczMapPath: path }),
+      setGlobeEnabled: (enabled) => set({ globeEnabled: enabled }),
+      setBasemapStyle: (style) => set({ basemapStyle: style }),
       setLayers: (layers) => set({ layers }),
 
       addLayer: (layer) => set((s) => ({ layers: [...s.layers, layer] })),
@@ -174,6 +212,7 @@ export const useStore = create<AppState>()(
       // R actions
       setRAvailable: (v) => set({ rAvailable: v }),
       setRRunning: (v) => set({ rRunning: v }),
+      setSidecarPhase: (phase) => set({ sidecarPhase: phase }),
 
       addRJob: (job) => set((s) => ({ activeJobs: [...s.activeJobs, job] })),
 
@@ -206,6 +245,8 @@ export const useStore = create<AppState>()(
           stationData: snapshot.stationData,
           stationFile: snapshot.stationFile,
           lczMapPath: snapshot.lczMapPath,
+          globeEnabled: snapshot.globeEnabled ?? false,
+          basemapStyle: snapshot.basemapStyle ?? 'positron',
           rAvailable: current.rAvailable,
           rRunning: current.rRunning,
           activeJobs: snapshot.activeJobs,
@@ -221,7 +262,7 @@ export const useStore = create<AppState>()(
     }),
     {
       name: 'lcz-studio-store',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         language: state.language,
@@ -231,12 +272,18 @@ export const useStore = create<AppState>()(
         projectName: state.projectName,
         projectDescription: state.projectDescription,
         onboardingDismissed: state.onboardingDismissed,
+        theme: state.theme,
         layers: state.layers,
         stationData: state.stationData,
         stationFile: state.stationFile,
         lczMapPath: state.lczMapPath,
+        globeEnabled: state.globeEnabled,
+        basemapStyle: state.basemapStyle,
         activeJobs: state.activeJobs,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state?.theme) applyTheme(state.theme)
+      },
       merge: (persisted, current) => ({
         ...current,
         ...(persisted as Partial<AppState>),
