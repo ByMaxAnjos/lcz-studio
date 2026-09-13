@@ -117,16 +117,16 @@ export const Toolbar: React.FC = () => {
         </button>
         <div className="toolbar-brand" aria-label={t('appName')}>
           <span className="toolbar-brand-mark" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <rect x="7.5" y="7.5" width="9" height="9" rx="3" />
-              <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none" />
+            {/* Concentric isotherms around a warm urban core — the classic
+                urban heat island / LCZ temperature-profile motif. */}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="9" strokeWidth="1.1" opacity="0.55" />
+              <circle cx="12" cy="12" r="6" strokeWidth="1.3" opacity="0.8" />
+              <circle cx="12" cy="12" r="3" strokeWidth="1.6" />
+              <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
             </svg>
           </span>
-          {/* appName is always "LCZ Studio" (kept untranslated as a brand name in every
-              language) — the mark above already carries "LCZ", so only "Studio" is shown
-              here to avoid repeating it. */}
-          <h1 className="app-title">{t('appName').replace(/^LCZ\s*/, '')}</h1>
+          <h1 className="app-title">{t('appName')}</h1>
         </div>
         <input
           className="project-name-input"
