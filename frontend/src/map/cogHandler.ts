@@ -1,5 +1,6 @@
 import { fromBlob, fromUrl } from 'geotiff'
 import type { GeoTIFF } from 'geotiff'
+import { readFile } from '@tauri-apps/plugin-fs'
 import { getLCZColor } from '../utils/lczPalette'
 
 export interface COGMetadata {
@@ -11,14 +12,35 @@ export interface COGMetadata {
   noDataValue?: number
 }
 
-async function openTiff(source: string | File): Promise<GeoTIFF> {
+export interface GeoTIFFRenderOptions {
+  /** LCZ classification rasters only: every value outside classes 1–17 is
+   * treated as NoData. This makes NA borders transparent without changing the
+   * source GeoTIFF used later by LCZ4py. */
+  renderMode?: 'lcz'
+}
+
+async function openTiff(source: string | File | Uint8Array<ArrayBuffer> | ArrayBuffer): Promise<GeoTIFF> {
   if (typeof source === 'string') {
-    return fromUrl(source)
+    if (source.startsWith('http://') || source.startsWith('https://') || source.startsWith('blob:')) {
+      return fromUrl(source)
+    }
+
+    const data = await readFile(source)
+    return fromBlob(new Blob([data]))
   }
+
+  if (source instanceof Uint8Array) {
+    return fromBlob(new Blob([source]))
+  }
+
+  if (source instanceof ArrayBuffer) {
+    return fromBlob(new Blob([source]))
+  }
+
   return fromBlob(source)
 }
 
-export async function readCOGMetadata(source: string | File): Promise<COGMetadata> {
+export async function readCOGMetadata(source: string | File | Uint8Array<ArrayBuffer> | ArrayBuffer): Promise<COGMetadata> {
   const tiff = await openTiff(source)
   const image = await tiff.getImage()
   const bbox = image.getBoundingBox()
@@ -37,18 +59,11 @@ export async function readCOGMetadata(source: string | File): Promise<COGMetadat
   }
 }
 
-export interface COGRenderOptions {
-  /** Force LCZ-palette coloring (classes 1-17) instead of relying on the
-   *  value-range heuristic below — set when the caller already knows the
-   *  raster is an LCZ classification (e.g. straight from lcz_get_map). */
-  renderMode?: 'lcz'
-}
-
 export async function cogToImageData(
-  source: string | File,
+  source: string | File | Uint8Array<ArrayBuffer> | ArrayBuffer,
   maxWidth = 1024,
   maxHeight = 1024,
-  options: COGRenderOptions = {}
+  options: GeoTIFFRenderOptions = {}
 ): Promise<{ imageData: ImageData; bounds: [[number, number], [number, number]]; width: number; height: number }> {
   const tiff = await openTiff(source)
   const image = await tiff.getImage()
@@ -67,17 +82,25 @@ export async function cogToImageData(
   const fd = image.getFileDirectory()
   const noData = fd?.GDAL_NODATA ? Number(fd.GDAL_NODATA) : undefined
 
-  const rasters = await image.readRasters({ width: outW, height: outH })
+  // Read via the top-level GeoTIFF (not the base image) so overview IFDs are used
+  // when present — reading the full-resolution image directly can try to allocate
+  // a buffer sized to the entire raster before downsampling, which fails outright
+  // for large rasters (e.g. continental-scale LCZ maps).
+  const rasters = await tiff.readRasters({ width: outW, height: outH })
   const band = rasters[0] as ArrayLike<number>
 
   const imageData = new ImageData(outW, outH)
   const px = imageData.data
 
   for (let i = 0; i < band.length; i++) {
-    const v = Math.round(band[i])
+    const rawValue = Number(band[i])
+    const v = Math.round(rawValue)
     const pi = i * 4
 
-    if (noData !== undefined && v === noData) {
+    // LCZ source rasters encode NA inconsistently (0, 255, -9999 or NaN,
+    // depending on the provider). For the map-get workflows, anything that
+    // is not a valid LCZ class is background, never a grey data value.
+    if (!Number.isFinite(rawValue) || (Number.isFinite(noData) && rawValue === noData) || (options.renderMode === 'lcz' && (v < 1 || v > 17))) {
       px[pi + 3] = 0
       continue
     }
@@ -107,10 +130,10 @@ export async function cogToImageData(
 }
 
 export async function createCOGCanvas(
-  source: string | File,
+  source: string | File | Uint8Array<ArrayBuffer> | ArrayBuffer,
   maxWidth = 1024,
   maxHeight = 1024,
-  options: COGRenderOptions = {}
+  options: GeoTIFFRenderOptions = {}
 ): Promise<{ canvas: HTMLCanvasElement; bounds: [[number, number], [number, number]] }> {
   const { imageData, bounds, width, height } = await cogToImageData(source, maxWidth, maxHeight, options)
   const canvas = document.createElement('canvas')
@@ -122,10 +145,10 @@ export async function createCOGCanvas(
 }
 
 export async function addGeoTIFFToMap(
-  source: string | File,
+  source: string | File | Uint8Array<ArrayBuffer> | ArrayBuffer,
   layerId: string,
   map: maplibregl.Map,
-  options: COGRenderOptions = {}
+  options: GeoTIFFRenderOptions = {}
 ): Promise<{ bounds: [[number, number], [number, number]] }> {
   const { canvas, bounds } = await createCOGCanvas(source, 1024, 1024, options)
   const dataUrl = canvas.toDataURL('image/png')

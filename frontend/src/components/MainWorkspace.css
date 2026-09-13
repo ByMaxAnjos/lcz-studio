@@ -15,7 +15,7 @@
   padding: 0.9rem 1rem;
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(246, 250, 245, 0.82));
+  background: var(--surface-strong);
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -66,7 +66,7 @@
   padding: 0.5rem 0.7rem;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--surface);
   color: var(--text-weak);
   font-size: 0.78rem;
   white-space: nowrap;
@@ -84,7 +84,7 @@
   gap: 0.25rem;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
 
@@ -165,7 +165,7 @@
   overflow: auto;
   padding: 1rem;
   border-right: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--surface-strong);
 }
 
 .workspace-output-slot {
@@ -188,7 +188,7 @@
 .workspace-map-stage { position: relative; min-height: 420px; flex: 1; }
 .workspace-map-stage .map-canvas-wrapper { width: 100%; height: 100%; min-height: 420px; }
 
-.workspace-visual-drawer { display: grid; gap: 0.65rem; padding: 0.8rem; border-top: 3px solid var(--brand-2); background: rgba(255, 255, 255, 0.92); }
+.workspace-visual-drawer { display: grid; gap: 0.65rem; padding: 0.8rem; border-top: 3px solid var(--brand-2); background: var(--surface-strong); }
 .workspace-visual-drawer > header { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
 .workspace-visual-drawer > header > div { display: grid; gap: 2px; }
 .workspace-visual-drawer small { color: var(--text-weak); }
@@ -200,17 +200,17 @@
   z-index: 3;
   max-width: 560px;
   padding: clamp(1rem, 3vw, 1.7rem);
-  border: 1px solid rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--border-strong);
   border-radius: 18px;
-  background: rgba(255, 255, 255, 0.93);
+  background: var(--surface-strong);
   box-shadow: 0 16px 42px rgba(20, 52, 29, 0.16);
   backdrop-filter: blur(14px);
 }
 .workspace-welcome h2 { margin: 0.35rem 0; color: var(--brand); font-family: var(--font-serif); font-size: clamp(1.35rem, 3vw, 2rem); }
 .workspace-welcome > p { margin: 0; color: var(--text-weak); line-height: 1.45; }
 .welcome-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.55rem; margin-top: 1rem; }
-.welcome-actions button { display: grid; gap: 0.2rem; min-height: 88px; padding: 0.7rem; text-align: left; border: 1px solid var(--border); border-radius: 10px; color: var(--text); background: #fff; cursor: pointer; }
-.welcome-actions button:hover { border-color: var(--brand-2); background: #f5faf3; transform: translateY(-1px); }
+.welcome-actions button { display: grid; gap: 0.2rem; min-height: 88px; padding: 0.7rem; text-align: left; border: 1px solid var(--border); border-radius: 10px; color: var(--text); background: var(--surface); cursor: pointer; }
+.welcome-actions button:hover { border-color: var(--brand-2); background: var(--surface-strong); transform: translateY(-1px); }
 .welcome-actions strong { font-size: 0.79rem; }
 .welcome-actions span { color: var(--text-weak); font-size: 0.68rem; line-height: 1.35; }
 
@@ -271,7 +271,7 @@
   padding: 1rem;
   border: 1px solid var(--border);
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.82);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
 
