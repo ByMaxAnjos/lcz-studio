@@ -1,0 +1,27 @@
+.basemap-picker {
+  pointer-events: auto;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.basemap-picker:hover {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: var(--border-strong);
+}
+
+.dark .basemap-picker {
+  background: rgba(20, 35, 18, 0.92);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.dark .basemap-picker:hover {
+  background: rgba(30, 48, 28, 0.98);
+}
