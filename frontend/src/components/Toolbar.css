@@ -64,12 +64,9 @@
     linear-gradient(135deg, rgba(45, 80, 22, 0.96), rgba(76, 175, 80, 0.94)),
     var(--brand);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.24), 0 6px 14px rgba(45, 80, 22, 0.14);
-  flex-shrink: 0;
-}
-
-.toolbar-brand-mark svg {
-  width: 18px;
-  height: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
 }
 
 .project-name-input {

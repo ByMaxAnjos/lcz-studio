@@ -116,16 +116,7 @@ export const Toolbar: React.FC = () => {
           <ToolbarIcon name="menu" />
         </button>
         <div className="toolbar-brand" aria-label={t('appName')}>
-          <span className="toolbar-brand-mark" aria-hidden="true">
-            {/* Three bold wavy lines — heat-shimmer isotherms, stacked and
-                tightening toward the bottom (hotter, denser near the urban
-                surface). Minimal, few strokes, no closed loops. */}
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round">
-              <path d="M3 7.5Q6.5 4.5 10 7.5T17 7.5T21 7.5" strokeWidth="1.7" opacity="0.5" />
-              <path d="M3 13Q6 10.6 9 13T15 13T21 13" strokeWidth="2" opacity="0.78" />
-              <path d="M3 18.2Q5.3 16.4 7.6 18.2T12.2 18.2T16.8 18.2T21 18.2" strokeWidth="2.3" />
-            </svg>
-          </span>
+          <span className="toolbar-brand-mark">LCZ</span>
           <h1 className="app-title">{t('appName')}</h1>
         </div>
         <input
