@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-LCZ Studio is a cloud-native GIS platform for visualizing and analyzing Local Climate Zones (LCZ) from the [LCZ4r R package](https://github.com/ipeaGIT/lcz4r). It runs as a web app (React + Vite) and optionally as a cross-platform desktop app (Tauri v2 + Rust).
+LCZ Studio is a cloud-native GIS platform for visualizing and analyzing Local Climate Zones (LCZ), backed by the [LCZ4py](https://github.com/ipeaGIT/lcz4r) Python package (a port of the LCZ4r R package) via a bundled Python sidecar. It runs as a web app (React + Vite) and optionally as a cross-platform desktop app (Tauri v2 + Rust).
 
 ## Commands
 
@@ -35,7 +35,7 @@ npm run lint
 cd frontend && npx tsc --noEmit
 ```
 
-> **Note**: The Vite dev server is locked to port **1420** (`strictPort: true` in `frontend/vite.config.ts`) to match the Tauri integration. The `tauri.conf.json` currently lists `devUrl: "http://localhost:5173"` — this is a known discrepancy; update it to `1420` if desktop hot-reload doesn't work.
+> **Note**: The Vite dev server is locked to port **1420** (`strictPort: true` in `frontend/vite.config.ts`) to match the Tauri integration; `tauri.conf.json`'s `devUrl` already matches (`http://localhost:1420`).
 
 There is no test runner currently configured.
 
@@ -55,21 +55,19 @@ The Tauri desktop app embeds the frontend: in dev it points to the Vite dev serv
 
 **State** (`store/useStore.ts`): Single Zustand store holding UI state (`language`, `workspace`, `sidebarOpen`, `bottomPanelOpen`), map state (`currentMapPath`, `layers[]`), and data state (`stationData`, `jobQueue`). All components read/write through `useStore()`.
 
-**Map layer** (`map/`): Two singleton managers, each exported as a module-level instance:
-- `mapLibreManager` (`MapLibreManager.ts`) — wraps MapLibre GL JS for base map, raster/fill/line layers, and camera control.
-- `deckGLManager` (`DeckGLManager.ts`) — wraps deck.gl's `MapboxOverlay` (interleaved mode) for `BitmapLayer` and `ScatterplotLayer` overlays. Integrated into MapLibre via `map.addControl(overlay)`.
+**Map layer** (`map/`):
+- `mapLibreManager` (`MapLibreManager.ts`) — module-level singleton wrapping MapLibre GL JS for base map, raster/fill/line layers, and camera control. This is the only map rendering path; there is no deck.gl integration in this codebase.
+- `cogHandler.ts` — loads GeoTIFF/Cloud-Optimized GeoTIFF rasters and adds them to the MapLibre map as a plain `image`/`raster` source+layer.
 
 **Data layer** (`data/`):
 - `duckdb.ts` — module-level singleton DuckDB-WASM connection (`db`, `conn`). Lazy-initialized on first call. Key exports: `initializeDuckDB`, `executeSQLQuery`, `loadCSV`, `loadGeoJSON`, `validateStationData`, `querySpatialData`, `aggregateByLCZ`. Station data requires columns: `date, station, var, lat, lon`.
 - `dataImporter.ts` — file import orchestration (CSV/GeoJSON).
 
-**Analysis** (`analysis/`): Pure-function modules with no side effects:
-- `uhiCalculator.ts` — UHI intensity from LCZ class + temperature delta; temperature profile offsets per class (WUDAPT empirical values).
-- `thermalAnomalyAnalyzer.ts` — hotspot/coldspot detection.
+**Analysis**: There is no client-side analysis module. UHI intensity, thermal anomaly detection, and every other LCZ4py computation run entirely in the Python sidecar (`desktop/sidecar/api.py`), invoked from `frontend/src/components/Lcz4pyBrowserPanel.tsx` via a generic, introspection-driven catalog (`GET /lcz4py/catalog`) and invoke route (`POST /lcz4py/{category}/{fn_name}`) — see `frontend/src/services/rService.ts`.
 
 **LCZ palette** (`utils/lczPalette.ts`): Authoritative WUDAPT color constants for classes 1–17 (`LCZ_PALETTE`, `LCZ_NAMES`). Classes 1–10 = built types; 11–17 = land cover types. Use `getLCZColor(n)` / `getLCZName(n)` rather than hardcoding hex values.
 
-**i18n** (`i18n/translations.ts`): Single flat object keyed by language (`en | pt | es | zh`), consumed via `useStore().language`. Add all new UI strings to all four language keys.
+**i18n** (`i18n/translations.ts`): Single flat object keyed by language (`en | pt | es | zh | fr | de | ja | ko | ar`), consumed via `useStore().language`. `en`/`pt`/`es`/`zh`/`fr` are hand-translated; `de`/`ja`/`ko`/`ar` currently fall back to the English strings via `Object.fromEntries`. Add all new UI strings to at least the hand-translated keys (`en/pt/es/zh/fr`) so `typeof en` stays satisfied for every block.
 
 **Styling**: Each component has a co-located CSS file (e.g., `Sidebar.css`). No CSS-in-JS or Tailwind; plain CSS with BEM-ish class names. Brand green: `#2d5016` (headings), interactive green: `#4caf50`.
 

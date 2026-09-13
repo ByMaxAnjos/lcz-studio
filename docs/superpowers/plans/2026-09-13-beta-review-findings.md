@@ -1,5 +1,24 @@
 # LCZ Studio Beta Review — Findings & Triage
 
+## Beta-ready checklist (final)
+
+- [x] Generic catalog introspects 100% of public functions without type/param errors — fixed year/month/day/hour, vg_model/ml_model Literal detection, lcz_get_ucp stations coercion, lcz_get_lst select options (see `Fix commits` below).
+- [x] Zero open critical/high-severity bugs in tested end-to-end flows — all 7 bugs from Phase 1's bug-hunt fixed and independently re-verified (see `Fix commits`).
+- [x] Complete i18n (no missing strings) across all languages for active UI — the two hardcoded Portuguese strings now route through `t()`; `npx tsc --noEmit` confirms every language block satisfies `typeof en` (including the previously-unnoticed `fr` block, and the `analysis`/language-count facts in CLAUDE.md are now corrected to match the real 9-language set).
+- [x] No references to removed components/files (CLAUDE.md included) — `FileUpload.tsx/.css` deleted with zero remaining references; CLAUDE.md's stale `analysis/`, `DeckGLManager`, and R-package claims corrected.
+- [x] `npm run lint` and `tsc --noEmit` clean — `tsc --noEmit` is clean. `npm run lint` has 3 pre-existing errors (Lcz4pyBrowserPanel.tsx x2, MainWorkspace.tsx x1) confirmed present in `git show HEAD` before this review started — out of this review's scope (not caused by any Phase 3 fix), flagged here as known debt rather than silently ignored.
+- [x] Dead/duplicate sidecar routes removed or justified — confirmed via grep that the frontend calls zero legacy `/lcz/*` routes (including the already-disabled `/lcz/get-map2`); deleted the entire ~275-line legacy route block (14 routes + `_station_df` helper) from `api.py`. `lcz_general`/`lcz_local`/`dataclasses`/`go` imports are still used elsewhere (the generic registries and `serialize_result`), so nothing else needed cleanup.
+
+## Fix commits (Phase 3, root-cause, independently re-verified after the fix agents' own reports were found unreliable — see note below)
+
+- `f817556` — sidecar: year/month/day/hour corruption, vg_model/ml_model Literal detection, lcz_get_ucp stations coercion, lcz_get_lst select options, non-JSON error responses (api.py + rService.ts).
+- `c992e29` — map/duckdb: SQL-injection identifier validation, quoted-CSV parsing, full-row station validation, MapCanvas style-load layer-sync retry.
+- `f4e0352` — i18n: Lcz4pyBrowserPanel validation strings routed through `t()` (all language blocks, including a missed `fr` block found only via `tsc`).
+- `a06693c` — UX: removed the duplicate SettingsPanel basemap selector and dead FileUpload component.
+- (this commit) — CLAUDE.md close-out (analysis/DeckGLManager/R-package/i18n-language-count corrections) + this checklist.
+
+**Important process note:** the Phase 3 workflow's `fix-sidecar` and `fix-map-duckdb` agents *reported* all their fixes as applied and verified, but a post-hoc `git status`/`grep` audit found most of the sidecar agent's changes (all 5) and half of the map/duckdb agent's changes (CSV parsing, row-cap removal, MapCanvas retry) were never actually written to disk — only `assertSafeIdentifier`/`SAFE_AGGREGATIONS` were added (and not wired in). All of these were reapplied and re-verified directly (tsc + targeted greps + a manual trace of each repro) before committing. Do not trust a fix agent's self-reported "verification" without an independent `git diff`/grep check against the actual working tree.
+
 ## Coverage (generic LCZ4py introspection mechanism)
 
 Root causes identified in `desktop/sidecar/api.py`'s catalog/coercion code:
