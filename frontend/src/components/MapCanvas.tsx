@@ -195,7 +195,11 @@ export const MapCanvas: React.FC = () => {
     if (!map.isStyleLoaded()) {
       // Style is mid-load (e.g. during a basemap switch) — retry once it finishes
       // instead of silently dropping this sync until the next `layers` change.
-      const onLoaded = () => syncLayers(map)
+      // MapLibre can still report isStyleLoaded() === false for a moment right
+      // after 'style.load' fires (sprite/glyph loading) — mirror the same
+      // 300ms buffer mapLibreManager.setBasemapStyle() already uses for its
+      // own post-style-load callback, rather than racing it.
+      const onLoaded = () => setTimeout(() => syncLayers(map), 300)
       map.once('style.load', onLoaded)
       return () => {
         map.off('style.load', onLoaded)

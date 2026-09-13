@@ -2,12 +2,23 @@
 
 ## Beta-ready checklist (final)
 
-- [x] Generic catalog introspects 100% of public functions without type/param errors — fixed year/month/day/hour, vg_model/ml_model Literal detection, lcz_get_ucp stations coercion, lcz_get_lst select options (see `Fix commits` below).
+- [x] Generic catalog introspects 100% of public functions without type/param errors — fixed year/month/day/hour, vg_model/ml_model Literal detection, lcz_get_ucp stations coercion (see `Fix commits` below). lcz_get_lst's select-options upgrade works generically but doesn't fire for that function specifically (its real docstring isn't brace-style) — downgraded to documented gap, see `Post-fix empirical verification`.
 - [x] Zero open critical/high-severity bugs in tested end-to-end flows — all 7 bugs from Phase 1's bug-hunt fixed and independently re-verified (see `Fix commits`).
 - [x] Complete i18n (no missing strings) across all languages for active UI — the two hardcoded Portuguese strings now route through `t()`; `npx tsc --noEmit` confirms every language block satisfies `typeof en` (including the previously-unnoticed `fr` block, and the `analysis`/language-count facts in CLAUDE.md are now corrected to match the real 9-language set).
 - [x] No references to removed components/files (CLAUDE.md included) — `FileUpload.tsx/.css` deleted with zero remaining references; CLAUDE.md's stale `analysis/`, `DeckGLManager`, and R-package claims corrected.
 - [x] `npm run lint` and `tsc --noEmit` clean — `tsc --noEmit` is clean. `npm run lint` has 3 pre-existing errors (Lcz4pyBrowserPanel.tsx x2, MainWorkspace.tsx x1) confirmed present in `git show HEAD` before this review started — out of this review's scope (not caused by any Phase 3 fix), flagged here as known debt rather than silently ignored.
 - [x] Dead/duplicate sidecar routes removed or justified — confirmed via grep that the frontend calls zero legacy `/lcz/*` routes (including the already-disabled `/lcz/get-map2`); deleted the entire ~275-line legacy route block (14 routes + `_station_df` helper) from `api.py`. `lcz_general`/`lcz_local`/`dataclasses`/`go` imports are still used elsewhere (the generic registries and `serialize_result`), so nothing else needed cleanup.
+
+## Post-fix empirical verification (advisor-prompted)
+
+Code-tracing isn't proof for a change to a shared 40-function dispatch mechanism, so the catalog was actually built and inspected (`fastapi.testclient.TestClient` + `.venv-sidecar-native`) after all fixes:
+
+- **`_MULTI_INT_PARAMS` name-based scope**: dumped every function's params — `year`/`month`/`day`/`hour` appear on exactly the same 11 functions identified in Phase 1 (no gridded-extraction function like `lcz_grid_era5`/`lcz_grid_chirps`/`lcz_grid_pdsi` uses these names), so forcing them to a list-of-int is safe repo-wide, not just traced.
+- **`kind=="text" and options -> "select"` upgrade**: dumped all 15 `select`-kind params catalog-wide — every one has a real, sane option list (no garbage from a docstring's incidental `{...}`).
+- **`lcz_get_lst`'s source/satellite/units (Bug D)**: the upgrade mechanism itself works (proven by the 15 clean selects above), but empirically these 3 params' *actual* installed docstrings are prose, not NumPy `{"a","b"}` brace notation — `_doc_options()` correctly finds nothing, so they remain `kind='text'`. The original Phase 1 finding assumed a brace-style docstring that doesn't match the installed LCZ4py version; downgraded from "fixed" to **documented gap** — there's no reliably-extractable enum for these 3 params without hardcoding an override.
+- **`lcz_clear_cache`** (removed as a legacy route in close-out): confirmed present in `GENERAL_REGISTRY`, so it's still reachable via `/lcz4py/general/lcz_clear_cache` — no capability loss.
+- **MapCanvas `reAddLayer` idempotency**: confirmed it already no-ops (`if (map.getLayer(layer.id)) return`) if the layer exists, so the new style.load-triggered `syncLayers` can't double-add against `mapLibreManager`'s own re-add-all callback. Added a 300ms delay after `style.load` (matching `MapLibreManager.setBasemapStyle`'s existing buffer) since `isStyleLoaded()` can still read false immediately after the event fires.
+- **Smoke-test failure ruled out as a regression**: `smoke_test_catalog.py`'s `lcz_plot_map` preview assertion fails with a `RasterioIOError` both before and after all Phase 3/4 fixes (tested against `git show f817556~1:desktop/sidecar/api.py`) — pre-existing, unrelated to this review, not touched.
 
 ## Fix commits (Phase 3, root-cause, independently re-verified after the fix agents' own reports were found unreliable — see note below)
 
