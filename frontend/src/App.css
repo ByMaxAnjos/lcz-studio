@@ -3,10 +3,7 @@
   flex-direction: column;
   width: 100%;
   height: 100%;
-  background:
-    radial-gradient(circle at top left, rgba(134, 194, 111, 0.12), transparent 30%),
-    radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.10), transparent 26%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.08));
+  background: var(--bg);
   position: relative;
   overflow: hidden;
 }

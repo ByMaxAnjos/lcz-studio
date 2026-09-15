@@ -81,7 +81,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
                   onClick={() => setTheme('dark-neutral')}
                   type="button"
                 >
-                  <span className="theme-icon">🌑</span>
+                  <span className="theme-icon">⬛</span>
                   <span>{t('settingsThemeDarkNeutral')}</span>
                 </button>
                 <button
@@ -101,7 +101,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({ onClose }) => {
             <div className="settings-about">
               <p><strong>LCZ Studio</strong></p>
               <p className="settings-about-text">{t('settingsAboutDescription')}</p>
-              <p className="settings-about-version">v0.1.0</p>
+              <p className="settings-about-version">v{__APP_VERSION__}</p>
             </div>
           </section>
         </div>

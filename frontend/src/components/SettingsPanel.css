@@ -1,7 +1,7 @@
 .settings-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(22, 39, 21, 0.3);
+  background: rgba(var(--scrim-rgb), 0.3);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   z-index: 1000;
@@ -17,7 +17,7 @@
 }
 
 .settings-panel {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 249, 242, 0.94));
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
@@ -58,7 +58,7 @@
 }
 
 .settings-close:hover {
-  background: rgba(45, 80, 22, 0.08);
+  background: rgba(var(--ink-rgb), 0.08);
   color: var(--text);
 }
 
@@ -108,7 +108,7 @@
 .settings-field input,
 .settings-field select,
 .settings-field textarea {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(var(--card-rgb), 0.85);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 0.55rem 0.75rem;
@@ -120,7 +120,7 @@
 .settings-field input:focus,
 .settings-field select:focus,
 .settings-field textarea:focus {
-  border-color: rgba(76, 175, 80, 0.4);
+  border-color: rgba(var(--accent-rgb), 0.4);
   outline: none;
 }
 
@@ -130,8 +130,8 @@
 }
 
 .settings-about {
-  background: rgba(45, 80, 22, 0.04);
-  border: 1px solid rgba(45, 80, 22, 0.08);
+  background: rgba(var(--ink-rgb), 0.04);
+  border: 1px solid rgba(var(--ink-rgb), 0.08);
   border-radius: var(--radius-sm);
   padding: 0.85rem 1rem;
 }
@@ -167,7 +167,7 @@
   padding: 0.6rem 0.4rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(var(--card-rgb), 0.7);
   cursor: pointer;
   transition: all 0.2s var(--ease);
   font-size: 0.78rem;
@@ -180,8 +180,8 @@
 }
 
 .theme-option.active {
-  background: rgba(76, 175, 80, 0.1);
-  border-color: rgba(76, 175, 80, 0.35);
+  background: rgba(var(--accent-rgb), 0.1);
+  border-color: rgba(var(--accent-rgb), 0.35);
   color: var(--brand);
   font-weight: 600;
 }

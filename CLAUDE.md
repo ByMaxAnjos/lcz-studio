@@ -69,7 +69,17 @@ The Tauri desktop app embeds the frontend: in dev it points to the Vite dev serv
 
 **i18n** (`i18n/translations.ts`): Single flat object keyed by language (`en | pt | es | zh | fr | de | ja | ko | ar`), consumed via `useStore().language`. `en`/`pt`/`es`/`zh`/`fr` are hand-translated; `de`/`ja`/`ko`/`ar` currently fall back to the English strings via `Object.fromEntries`. Add all new UI strings to at least the hand-translated keys (`en/pt/es/zh/fr`) so `typeof en` stays satisfied for every block.
 
-**Styling**: Each component has a co-located CSS file (e.g., `Sidebar.css`). No CSS-in-JS or Tailwind; plain CSS with BEM-ish class names. Brand green: `#2d5016` (headings), interactive green: `#4caf50`.
+**Styling**: Each component has a co-located CSS file (e.g., `Sidebar.css`). No CSS-in-JS or Tailwind; plain CSS with BEM-ish class names.
+
+The theme is single-sourced in `index.css`: `:root` (light), `.dark` (Apple-style elevated grays) and `.dark.dark-neutral` (pure black / OLED) define **only** custom properties — there are no per-component `.dark .foo { ... }` overrides. Component CSS must never hardcode a color; every fill, border, shadow and text color reads a token:
+
+- Surfaces: `--bg`, `--bg-deep`, `--surface`, `--surface-hover`, `--surface-sunken`, `--chrome`
+- Text: `--text`, `--text-weak`, `--text-soft`; on an accent fill use `--on-accent`
+- Brand: `--brand` (headings), `--accent` (interactive), `--warn`, `--danger`
+- Tints are mixed from rgb triples: `rgba(var(--accent-rgb), 0.12)`, likewise `--ink-rgb` (borders/shadows), `--card-rgb`, `--scrim-rgb`, `--warn-rgb`, `--danger-rgb`
+- Type: `--font-display` (headings), `--font-sans`, `--font-mono`; radii `--radius-sm/md/lg/xl`; elevation `--shadow-sm/md/lg`
+
+Adding a theme means adding one token block, nothing else. The WUDAPT LCZ class colors in `utils/lczPalette.ts` are scientific encoding and stay fixed in every theme.
 
 ### Desktop (`desktop/src-tauri/`)
 

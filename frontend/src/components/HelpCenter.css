@@ -16,7 +16,7 @@
   gap: 0;
   padding: 0;
   border-bottom: 1px solid var(--border);
-  background: rgba(45, 80, 22, 0.03);
+  background: rgba(var(--ink-rgb), 0.03);
   flex-shrink: 0;
 }
 
@@ -39,7 +39,7 @@
 
 .help-nav button:hover {
   color: var(--text);
-  background: rgba(76, 175, 80, 0.04);
+  background: rgba(var(--accent-rgb), 0.04);
 }
 
 .help-nav button.active {
@@ -81,8 +81,8 @@
   align-items: center;
   gap: 1rem;
   padding: 1.25rem;
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(45, 80, 22, 0.04));
-  border: 1px solid rgba(76, 175, 80, 0.15);
+  background: var(--surface);
+  border: 1px solid rgba(var(--accent-rgb), 0.15);
   border-radius: 14px;
 }
 
@@ -159,8 +159,8 @@
 
 /* Citation card */
 .help-citation-card {
-  background: rgba(45, 80, 22, 0.04);
-  border: 1px solid rgba(76, 175, 80, 0.12);
+  background: rgba(var(--ink-rgb), 0.04);
+  border: 1px solid rgba(var(--accent-rgb), 0.12);
   border-radius: 12px;
   padding: 1rem;
 }
@@ -191,7 +191,7 @@
 }
 
 .help-citation-bibtex {
-  background: rgba(0, 0, 0, 0.04);
+  background: rgba(var(--scrim-rgb), 0.04);
   border-radius: 8px;
   padding: 0.65rem 0.8rem;
   overflow-x: auto;
@@ -211,7 +211,7 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.7rem 0.85rem;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(var(--card-rgb), 0.85);
   border: 1px solid var(--border);
   border-radius: 10px;
   color: var(--text);
@@ -255,8 +255,8 @@
   align-items: flex-start;
   gap: 0.5rem;
   padding: 0.65rem;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(76, 175, 80, 0.1);
+  background: rgba(var(--card-rgb), 0.7);
+  border: 1px solid rgba(var(--accent-rgb), 0.1);
   border-radius: 10px;
 }
 
@@ -312,7 +312,7 @@
   align-items: flex-start;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: rgba(76, 175, 80, 0.04);
+  background: var(--surface);
   border-radius: 10px;
 }
 
@@ -323,7 +323,7 @@
   align-items: center;
   justify-content: center;
   background: var(--brand);
-  color: white;
+  color: var(--on-accent);
   border-radius: 50%;
   font-size: 0.72rem;
   font-weight: 700;
@@ -388,16 +388,16 @@
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(var(--card-rgb), 0.7);
   transition: all 0.2s var(--ease);
 }
 
 .tool-guide-card:hover {
-  border-color: rgba(76, 175, 80, 0.2);
+  border-color: rgba(var(--accent-rgb), 0.2);
 }
 
 .tool-guide-card.expanded {
-  border-color: rgba(76, 175, 80, 0.3);
+  border-color: rgba(var(--accent-rgb), 0.3);
   background: white;
 }
 
@@ -479,7 +479,7 @@
 .tool-guide-section pre {
   margin: 0;
   padding: 0.6rem 0.8rem;
-  background: rgba(45, 80, 22, 0.04);
+  background: rgba(var(--ink-rgb), 0.04);
   border-radius: 8px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
@@ -514,7 +514,7 @@
   gap: 0.5rem;
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--border);
-  background: rgba(45, 80, 22, 0.03);
+  background: rgba(var(--ink-rgb), 0.03);
   flex-shrink: 0;
 }
 
@@ -531,18 +531,18 @@
 }
 
 .help-page-actions button:hover {
-  background: rgba(76, 175, 80, 0.06);
-  border-color: rgba(76, 175, 80, 0.3);
+  background: rgba(var(--accent-rgb), 0.06);
+  border-color: rgba(var(--accent-rgb), 0.3);
 }
 
 .help-page-actions button.primary {
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  color: white;
+  background: var(--accent);
+  color: var(--on-accent);
   border-color: transparent;
 }
 
 .help-page-actions button.primary:hover {
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+  box-shadow: 0 4px 12px rgba(var(--accent-rgb), 0.25);
 }
 
 /* Dark mode */
@@ -552,7 +552,7 @@
 }
 
 .dark .help-nav {
-  background: rgba(76, 175, 80, 0.04);
+  background: transparent;
   border-color: var(--border);
 }
 
@@ -562,7 +562,7 @@
 
 .dark .help-nav button:hover {
   color: var(--text);
-  background: rgba(76, 175, 80, 0.06);
+  background: rgba(var(--accent-rgb), 0.06);
 }
 
 .dark .help-nav button.active {
@@ -570,61 +570,61 @@
 }
 
 .dark .help-creator {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.06), rgba(45, 80, 22, 0.03));
-  border-color: rgba(76, 175, 80, 0.12);
+  background: var(--surface);
+  border-color: rgba(var(--accent-rgb), 0.12);
 }
 
 .dark .help-citation-card {
-  background: rgba(76, 175, 80, 0.04);
-  border-color: rgba(76, 175, 80, 0.1);
+  background: var(--surface);
+  border-color: rgba(var(--accent-rgb), 0.1);
 }
 
 .dark .help-citation-bibtex {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(var(--scrim-rgb), 0.2);
 }
 
 .dark .help-highlight-link {
-  background: rgba(20, 35, 18, 0.6);
+  background: var(--surface);
   border-color: var(--border);
 }
 
 .dark .help-highlight-link:hover {
-  background: rgba(30, 48, 28, 0.8);
+  background: var(--surface-hover);
 }
 
 .dark .help-feature {
-  background: rgba(20, 35, 18, 0.5);
-  border-color: rgba(76, 175, 80, 0.08);
+  background: var(--surface);
+  border-color: rgba(var(--accent-rgb), 0.08);
 }
 
 .dark .help-workflow-step {
-  background: rgba(76, 175, 80, 0.04);
+  background: var(--surface);
 }
 
 .dark .tool-guide-card {
-  background: rgba(20, 35, 18, 0.5);
+  background: var(--surface);
   border-color: var(--border);
 }
 
 .dark .tool-guide-card.expanded {
-  background: rgba(30, 48, 28, 0.6);
+  background: var(--surface-hover);
 }
 
 .dark .tool-guide-section pre {
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(var(--scrim-rgb), 0.2);
 }
 
 .dark .help-page-actions {
-  background: rgba(76, 175, 80, 0.03);
+  background: var(--surface);
   border-color: var(--border);
 }
 
 .dark .help-page-actions button {
-  background: rgba(20, 35, 18, 0.6);
+  background: var(--surface);
   border-color: var(--border);
   color: var(--text);
 }
 
 .dark .help-page-actions button:hover {
-  background: rgba(30, 48, 28, 0.8);
+  background: var(--surface-hover);
 }

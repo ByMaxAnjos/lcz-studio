@@ -1,31 +1,62 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Inter is the fallback face for non-Apple platforms; macOS/iOS get SF Pro
+   from the system stack below and never download it. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+/* ── Light (Apple system light) ───────────────────────────────────────────── */
 :root {
   color-scheme: light;
-  --bg: #f6f9f4;
-  --bg-deep: #e9f1e7;
-  --surface: rgba(255, 255, 255, 0.72);
-  --surface-strong: rgba(255, 255, 255, 0.92);
-  --surface-muted: rgba(255, 255, 255, 0.56);
-  --border: rgba(45, 80, 22, 0.12);
-  --border-strong: rgba(45, 80, 22, 0.24);
-  --text: #162715;
-  --text-weak: #5f745c;
-  --text-soft: #879684;
-  --brand: #2d5016;
-  --brand-2: #4caf50;
-  --brand-3: #86c26f;
-  --shadow-lg: 0 18px 50px rgba(28, 53, 18, 0.12);
-  --shadow-md: 0 10px 28px rgba(28, 53, 18, 0.08);
-  --shadow-sm: 0 4px 12px rgba(28, 53, 18, 0.06);
-  --radius-sm: 10px;
-  --radius-md: 16px;
-  --radius-lg: 22px;
-  --radius-xl: 28px;
-  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --font-serif: 'Libre Baskerville', Georgia, serif;
-  --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Surfaces */
+  --bg: #f5f5f7;
+  --bg-deep: #ececee;
+  --surface: #ffffff;
+  --surface-hover: #f2f2f5;
+  --surface-sunken: #ececee;
+  --surface-strong: #ffffff;
+  --surface-muted: rgba(255, 255, 255, 0.6);
+  --chrome: rgba(250, 250, 252, 0.72);
+
+  /* rgb triples — every tint in the app is mixed from these four */
+  --card-rgb: 255, 255, 255;
+  --ink-rgb: 0, 0, 0;
+  --accent-rgb: 47, 125, 50;
+  --scrim-rgb: 0, 0, 0;
+  --warn-rgb: 181, 134, 0;
+  --danger-rgb: 215, 58, 47;
+
+  /* Text — Apple label hierarchy */
+  --text: #1d1d1f;
+  --text-weak: #6e6e73;
+  --text-soft: #8e8e93;
+
+  /* Brand: LCZ green, calibrated for contrast on white */
+  --brand: #23591f;
+  --accent: #2f7d32;
+  --brand-2: var(--accent);
+  --brand-3: var(--accent);
+  --on-accent: #ffffff;
+  --warn: #8a6100;
+  --danger: #d73a2f;
+
+  /* Separators */
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.16);
+
+  /* Elevation — tight contact shadow + soft ambient, never colored */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.04), 0 6px 16px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.05), 0 16px 48px rgba(0, 0, 0, 0.12);
+
+  /* Continuous-ish corners */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, monospace;
+  --ease: cubic-bezier(0.32, 0.72, 0, 1);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -33,701 +64,59 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Dark mode ────────────────────────────────────────────────────────────── */
+/* ── Dark (Apple system dark, elevated grays) ─────────────────────────────── */
 .dark {
   color-scheme: dark;
-  --bg: #0f1a0e;
-  --bg-deep: #0a120a;
-  --surface: rgba(20, 35, 18, 0.85);
-  --surface-strong: rgba(30, 48, 28, 0.92);
-  --surface-muted: rgba(20, 35, 18, 0.6);
-  --border: rgba(120, 180, 100, 0.15);
-  --border-strong: rgba(120, 180, 100, 0.28);
-  --text: #e4ede2;
-  --text-weak: #a3b8a0;
-  --text-soft: #6b8068;
-  --brand: #6abf54;
-  --brand-2: #4caf50;
-  --brand-3: #3d8c40;
-  --shadow-lg: 0 18px 50px rgba(0, 0, 0, 0.35);
-  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.28);
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  --bg: #1c1c1e;
+  --bg-deep: #141416;
+  --surface: #2c2c2e;
+  --surface-hover: #3a3a3c;
+  --surface-sunken: #141416;
+  --surface-strong: #3a3a3c;
+  --surface-muted: rgba(58, 58, 60, 0.6);
+  --chrome: rgba(30, 30, 32, 0.72);
+
+  --card-rgb: 58, 58, 60;
+  --ink-rgb: 255, 255, 255;
+  --accent-rgb: 48, 209, 88;
+  --scrim-rgb: 0, 0, 0;
+  --warn-rgb: 255, 214, 10;
+  --danger-rgb: 255, 105, 97;
+
+  --text: #f5f5f7;
+  --text-weak: #a1a1a6;
+  --text-soft: #8e8e93;
+
+  --brand: #4cd964;
+  --accent: #30d158;
+  --on-accent: #0a1f0d;
+  --warn: #ffd60a;
+  --danger: #ff6961;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.6);
 }
 
-/* Second dark variant — neutral gray/black (GitHub Dark-style) instead of the
-   green-tinted default above. Every ".dark ..." rule below already reads
-   these custom properties, so redefining just the tokens (higher specificity
-   via the extra .dark-neutral class) re-themes the whole app with no other
-   changes needed. */
+/* ── True black (OLED) — same dark palette, pure black grounds ────────────── */
 .dark.dark-neutral {
-  --bg: #0d1117;
-  --bg-deep: #010409;
-  --surface: rgba(22, 27, 34, 0.85);
-  --surface-strong: rgba(33, 38, 45, 0.92);
-  --surface-muted: rgba(22, 27, 34, 0.6);
-  --border: rgba(240, 246, 252, 0.1);
-  --border-strong: rgba(240, 246, 252, 0.18);
-  --text: #e6edf3;
-  --text-weak: #8b949e;
-  --text-soft: #6e7681;
-  --brand: #3fb950;
-  --brand-2: #4caf50;
-  --brand-3: #2ea043;
-}
-
-/* Body */
-.dark body {
-  background:
-    radial-gradient(circle at top left, rgba(76, 175, 80, 0.06), transparent 28%),
-    radial-gradient(circle at top right, rgba(14, 165, 233, 0.04), transparent 24%),
-    linear-gradient(180deg, var(--bg) 0%, #111d10 55%, var(--bg-deep) 100%);
-}
-
-.dark body::before {
-  background:
-    linear-gradient(120deg, rgba(76, 175, 80, 0.02), transparent 20%, rgba(76, 175, 80, 0.015) 55%, transparent 82%),
-    radial-gradient(circle at 20% 20%, rgba(134, 194, 111, 0.05), transparent 18%),
-    radial-gradient(circle at 80% 10%, rgba(76, 175, 80, 0.04), transparent 20%);
-}
-
-.dark.dark-neutral body {
-  background: linear-gradient(180deg, var(--bg) 0%, #0d1117 55%, var(--bg-deep) 100%);
-}
-
-.dark.dark-neutral body::before {
-  background: none;
-}
-
-/* Toolbar */
-.dark .toolbar {
-  background: linear-gradient(135deg, rgba(20, 35, 18, 0.92), rgba(15, 26, 14, 0.88));
-  border-color: var(--border);
-}
-
-.dark .toolbar-btn,
-.dark .toolbar-icon-btn {
-  background: linear-gradient(180deg, rgba(30, 48, 28, 0.92), rgba(20, 35, 18, 0.88));
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .toolbar-icon-btn {
-  background: transparent;
-  border-color: transparent;
-  color: var(--text-weak);
-}
-
-.dark .toolbar-btn:hover,
-.dark .toolbar-icon-btn:hover {
-  background: var(--surface-strong);
-  border-color: var(--border-strong);
-  color: var(--brand);
-}
-
-.dark .project-name-input {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .project-name-input::placeholder {
-  color: var(--text-soft);
-}
-
-.dark .language-select {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .language-select option {
-  background: #1a2e18;
-  color: var(--text);
-}
-
-.dark .status-pill {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .status-pill.ready {
-  background: rgba(76, 175, 80, 0.15);
-}
-
-/* Sidebar */
-.dark .sidebar {
-  background:
-    radial-gradient(circle at top right, rgba(134, 194, 111, 0.06), transparent 28%),
-    linear-gradient(180deg, rgba(20, 35, 18, 0.92), rgba(15, 26, 14, 0.88));
-  border-color: var(--border);
-}
-
-.dark .tool-btn {
-  background: rgba(20, 35, 18, 0.8);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .tool-btn:hover {
-  background: rgba(30, 48, 28, 0.96);
-  border-color: rgba(76, 175, 80, 0.24);
-  color: var(--brand);
-}
-
-.dark .tool-btn.active {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.12), rgba(106, 191, 84, 0.14));
-  border-color: rgba(76, 175, 80, 0.3);
-  color: var(--brand);
-}
-
-.dark .tool-category-header {
-  color: var(--text-weak);
-}
-
-.dark .tool-category-header:hover {
-  background: rgba(76, 175, 80, 0.05);
-  color: var(--text);
-}
-
-.dark .getting-started-card {
-  border-color: rgba(76, 175, 80, 0.12);
-  background:
-    radial-gradient(circle at top right, rgba(134, 194, 111, 0.08), transparent 32%),
-    linear-gradient(180deg, rgba(25, 42, 23, 0.96), rgba(20, 35, 18, 0.92));
-}
-
-.dark .getting-started-header h3 {
-  color: var(--brand);
-}
-
-.dark .getting-started-header p {
-  color: var(--text-weak);
-}
-
-.dark .quick-action {
-  background: rgba(20, 35, 18, 0.96);
-  color: var(--brand);
-  border-color: rgba(76, 175, 80, 0.12);
-}
-
-.dark .quick-action:hover {
-  background: rgba(30, 48, 28, 0.98);
-  border-color: rgba(76, 175, 80, 0.3);
-}
-
-/* Layer Manager - compact */
-.dark .layer-manager {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-}
-
-.dark .layer-manager-header {
-  background: rgba(20, 35, 18, 0.88);
-  border-color: var(--border);
-}
-
-.dark .layer-card {
-  background: rgba(20, 35, 18, 0.82);
-  border-color: var(--border);
-}
-
-.dark .layer-card:hover {
-  border-color: rgba(76, 175, 80, 0.24);
-  background: rgba(30, 48, 28, 0.92);
-}
-
-.dark .layer-card.expanded {
-  background: linear-gradient(180deg, rgba(25, 42, 23, 0.96), rgba(20, 35, 18, 0.94));
-  border-color: rgba(76, 175, 80, 0.24);
-}
-
-.dark .layer-name-btn {
-  color: var(--text);
-}
-
-.dark .layer-name-btn:hover {
-  background: rgba(76, 175, 80, 0.05);
-}
-
-.dark .layer-action-btn {
-  color: var(--text-soft);
-}
-
-.dark .layer-action-btn:hover {
-  background: rgba(76, 175, 80, 0.08);
-  color: var(--text);
-}
-
-.dark .layer-remove-btn {
-  color: var(--text-soft);
-}
-
-.dark .layer-remove-btn:hover {
-  background: rgba(239, 83, 80, 0.1);
-  color: #ef9a9a;
-}
-
-.dark .opacity-row label {
-  color: var(--text-weak);
-}
-
-.dark .opacity-value {
-  color: var(--text-soft);
-}
-
-.dark .detail-label {
-  color: var(--text-weak);
-}
-
-.dark .detail-value {
-  color: var(--text);
-}
-
-.dark .detail-value.file-path {
-  color: var(--text-soft);
-}
-
-.dark .layer-search-input {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .layer-search-input::placeholder {
-  color: var(--text-soft);
-}
-
-.dark .layer-undo-bar {
-  background: rgba(255, 193, 7, 0.08);
-  border-color: rgba(255, 193, 7, 0.15);
-  color: #ffd54f;
-}
-
-.dark .layer-undo-btn {
-  border-color: rgba(255, 193, 7, 0.2);
-  color: #ffd54f;
-}
-
-.dark .drag-handle {
-  color: var(--text-soft);
-}
-
-.dark .layer-add-btn {
-  background: rgba(76, 175, 80, 0.1);
-  border-color: rgba(76, 175, 80, 0.2);
-  color: var(--brand-2);
-}
-
-.dark .layer-add-btn:hover:not(:disabled) {
-  background: rgba(76, 175, 80, 0.18);
-  border-color: rgba(76, 175, 80, 0.35);
-}
-
-.dark .layer-add-first-btn {
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  color: white;
-}
-
-.dark .layer-import-error {
-  background: rgba(239, 83, 80, 0.08);
-  border-color: rgba(239, 83, 80, 0.15);
-  color: #ef9a9a;
-}
-
-.dark .layer-import-error button {
-  color: #ef9a9a;
-}
-
-.dark .layer-import-error button:hover {
-  background: rgba(239, 83, 80, 0.12);
-}
-
-/* Map Canvas */
-.dark .map-canvas-wrapper {
-  border-color: var(--border);
-  background:
-    radial-gradient(circle at top left, rgba(14, 165, 233, 0.04), transparent 22%),
-    linear-gradient(180deg, rgba(15, 26, 14, 0.85), rgba(10, 18, 10, 0.92));
-}
-
-.dark .map-basemap-select,
-.dark .basemap-picker-trigger {
-  background: rgba(20, 35, 18, 0.92);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .basemap-picker-panel {
-  background: rgba(20, 35, 18, 0.98);
-  border-color: var(--border);
-}
-
-.dark .basemap-picker-option:hover {
-  background: rgba(76, 175, 80, 0.06);
-}
-
-.dark .basemap-picker-option.active {
-  background: rgba(76, 175, 80, 0.12);
-  border-color: rgba(76, 175, 80, 0.25);
-}
-
-.dark .map-coordinates {
-  background: rgba(20, 35, 18, 0.92);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-/* Main Workspace */
-.dark .workspace-empty-workbench,
-.dark .workspace-import-panel,
-.dark .workspace-help-panel {
-  color: var(--text);
-}
-
-.dark .workspace-section-heading h2 {
-  color: var(--brand);
-}
-
-.dark .workspace-kicker {
-  color: var(--text-weak);
-}
-
-/* File Upload */
-.dark .file-upload {
-  border-color: rgba(76, 175, 80, 0.2);
-  background:
-    radial-gradient(circle at top right, rgba(134, 194, 111, 0.08), transparent 30%),
-    linear-gradient(180deg, rgba(25, 42, 23, 0.92), rgba(20, 35, 18, 0.9));
-}
-
-.dark .file-upload:hover {
-  border-color: rgba(76, 175, 80, 0.4);
-}
-
-.dark .file-upload.dragging {
-  border-color: rgba(76, 175, 80, 0.55);
-  background:
-    radial-gradient(circle at top right, rgba(134, 194, 111, 0.15), transparent 30%),
-    linear-gradient(180deg, rgba(30, 48, 28, 0.98), rgba(25, 42, 23, 0.96));
-}
-
-.dark .upload-text {
-  color: var(--text);
-}
-
-.dark .browse-btn {
-  color: var(--brand-2);
-}
-
-.dark .upload-hint {
-  color: var(--text-soft);
-}
-
-.dark .upload-history {
-  background: rgba(20, 35, 18, 0.88);
-  border-color: var(--border);
-}
-
-.dark .upload-history-header {
-  background: rgba(76, 175, 80, 0.04);
-  border-color: var(--border);
-  color: var(--text-weak);
-}
-
-.dark .upload-history-item {
-  border-color: rgba(76, 175, 80, 0.04);
-  color: var(--text);
-}
-
-.dark .upload-history-name {
-  color: var(--text);
-}
-
-.dark .upload-history-message {
-  color: var(--text-soft);
-}
-
-/* LCZ4py Panel */
-.dark .lcz4py-browser,
-.dark .function-workflow {
-  color: var(--text);
-}
-
-.dark .catalog-heading h3 {
-  color: var(--brand);
-}
-
-.dark .catalog-eyebrow {
-  color: var(--text-weak);
-}
-
-.dark .function-card {
-  background: rgba(20, 35, 18, 0.82);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .function-card:hover {
-  background: rgba(30, 48, 28, 0.92);
-  border-color: rgba(76, 175, 80, 0.24);
-}
-
-.dark .function-card p {
-  color: var(--text-weak);
-}
-
-.dark .function-card code {
-  color: var(--text-soft);
-}
-
-.dark .catalog-group-heading {
-  color: var(--text-weak);
-}
-
-.dark .workflow-heading h3 {
-  color: var(--brand);
-}
-
-.dark .workflow-heading p {
-  color: var(--text-weak);
-}
-
-.dark .workflow-id {
-  color: var(--text-soft);
-}
-
-.dark .lcz-field label {
-  color: var(--text);
-}
-
-.dark .field-hint {
-  color: var(--text-weak);
-}
-
-.dark .default-note {
-  color: var(--text-soft);
-}
-
-.dark .run-function-button {
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  color: white;
-}
-
-.dark .run-function-button:hover:not(:disabled) {
-  box-shadow: 0 8px 24px rgba(76, 175, 80, 0.25);
-}
-
-.dark .workflow-result {
-  background: rgba(20, 35, 18, 0.6);
-  border-color: var(--border);
-}
-
-.dark .result-artifact,
-.dark .result-plot-frame {
-  background: rgba(20, 35, 18, 0.8);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .artifact-action {
-  color: var(--brand-2);
-}
-
-.dark .panel-error {
-  background: rgba(239, 83, 80, 0.08);
-  border-color: rgba(239, 83, 80, 0.2);
-  color: #ef9a9a;
-}
-
-.dark .setup-notice {
-  background: rgba(255, 193, 7, 0.08);
-  border-color: rgba(255, 193, 7, 0.2);
-  color: #ffd54f;
-}
-
-.dark .catalog-empty-state {
-  color: var(--text-weak);
-}
-
-/* Settings Panel */
-.dark .settings-overlay {
-  background: rgba(0, 0, 0, 0.5);
-}
-
-.dark .settings-panel {
-  background: linear-gradient(180deg, rgba(25, 42, 23, 0.98), rgba(20, 35, 18, 0.96));
-  border-color: var(--border);
-}
-
-.dark .settings-header h2 {
-  color: var(--brand);
-}
-
-.dark .settings-field input,
-.dark .settings-field select,
-.dark .settings-field textarea {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .settings-field label {
-  color: var(--text);
-}
-
-.dark .theme-option {
-  background: rgba(20, 35, 18, 0.7);
-  border-color: var(--border);
-  color: var(--text-weak);
-}
-
-.dark .theme-option:hover {
-  background: rgba(30, 48, 28, 0.95);
-  border-color: var(--border-strong);
-}
-
-.dark .theme-option.active {
-  background: rgba(76, 175, 80, 0.12);
-  border-color: rgba(76, 175, 80, 0.35);
-  color: var(--brand);
-}
-
-.dark .settings-about {
-  background: rgba(76, 175, 80, 0.04);
-  border-color: rgba(76, 175, 80, 0.08);
-}
-
-.dark .settings-about-text {
-  color: var(--text-weak);
-}
-
-.dark .settings-about-version {
-  color: var(--text-soft);
-}
-
-/* Help Center */
-.dark .help-page {
-  color: var(--text);
-}
-
-.dark .help-page-header h2 {
-  color: var(--brand);
-}
-
-.dark .help-intro-item h3,
-.dark .help-section-heading h3 {
-  color: var(--text);
-}
-
-.dark .help-intro-item p,
-.dark .help-section-heading p {
-  color: var(--text-weak);
-}
-
-.dark .help-reference-list p {
-  color: var(--text-weak);
-}
-
-.dark .help-reference-list strong {
-  color: var(--text);
-}
-
-.dark .help-highlight-link {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .help-highlight-link:hover {
-  background: rgba(30, 48, 28, 0.95);
-  border-color: rgba(76, 175, 80, 0.3);
-}
-
-.dark .help-tutorial-line strong {
-  color: var(--text);
-}
-
-.dark .help-tutorial-line p {
-  color: var(--text-weak);
-}
-
-.dark .help-start-line strong {
-  color: var(--text);
-}
-
-.dark .help-start-line p {
-  color: var(--text-weak);
-}
-
-.dark .help-tip {
-  background: rgba(76, 175, 80, 0.06);
-  border-color: rgba(76, 175, 80, 0.12);
-  color: var(--text-weak);
-}
-
-.dark .help-tip strong {
-  color: var(--text);
-}
-
-.dark .help-page-actions button {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .help-page-actions button:hover {
-  background: rgba(30, 48, 28, 0.95);
-  border-color: var(--border-strong);
-}
-
-.dark .help-page-actions button.primary {
-  background: linear-gradient(135deg, var(--brand), var(--brand-2));
-  color: white;
-  border-color: transparent;
-}
-
-/* R Status Bar */
-.dark .r-status-bar {
-  background: rgba(20, 35, 18, 0.72);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .r-status-bar.connected {
-  background: rgba(76, 175, 80, 0.12);
-  color: #81c784;
-}
-
-.dark .r-status-bar.connecting {
-  background: rgba(255, 193, 7, 0.1);
-  color: #ffd54f;
-}
-
-.dark .r-status-bar.failed {
-  background: rgba(239, 83, 80, 0.1);
-  color: #ef9a9a;
-}
-
-.dark .r-status-spinner {
-  border-color: rgba(76, 175, 80, 0.2);
-  border-top-color: #6abf54;
-}
-
-/* Scrollbar */
-.dark ::-webkit-scrollbar-track {
-  background: rgba(76, 175, 80, 0.04);
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: rgba(76, 175, 80, 0.18);
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: rgba(76, 175, 80, 0.28);
-}
-
-/* ── Base styles ──────────────────────────────────────────────────────────── */
+  --bg: #000000;
+  --bg-deep: #000000;
+  --surface: #1c1c1e;
+  --surface-hover: #2c2c2e;
+  --surface-sunken: #000000;
+  --surface-strong: #2c2c2e;
+  --surface-muted: rgba(28, 28, 30, 0.6);
+  --chrome: rgba(0, 0, 0, 0.72);
+  --card-rgb: 28, 28, 30;
+  --border: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
 * {
   margin: 0;
   padding: 0;
@@ -747,24 +136,22 @@ html {
 
 body {
   font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.47;
+  letter-spacing: -0.006em;
   color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(76, 175, 80, 0.12), transparent 28%),
-    radial-gradient(circle at top right, rgba(14, 165, 233, 0.10), transparent 24%),
-    linear-gradient(180deg, var(--bg) 0%, #f9fbf8 55%, var(--bg-deep) 100%);
+  background: var(--bg);
   overflow: hidden;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(120deg, rgba(45, 80, 22, 0.05), transparent 20%, rgba(45, 80, 22, 0.03) 55%, transparent 82%),
-    radial-gradient(circle at 20% 20%, rgba(134, 194, 111, 0.16), transparent 18%),
-    radial-gradient(circle at 80% 10%, rgba(76, 175, 80, 0.10), transparent 20%);
-  opacity: 0.9;
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.022em;
+  font-weight: 600;
+}
+
+h1, h2 {
+  letter-spacing: -0.028em;
 }
 
 a {
@@ -777,6 +164,7 @@ input,
 select,
 textarea {
   font: inherit;
+  letter-spacing: inherit;
 }
 
 button {
@@ -785,289 +173,71 @@ button {
   color: inherit;
 }
 
+input,
+select,
+textarea {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--border);
+}
+
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid rgba(76, 175, 80, 0.35);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(45, 80, 22, 0.06);
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(45, 80, 22, 0.22);
-  border-radius: 999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(45, 80, 22, 0.34);
-}
-
-/* ── Dark mode: selects, options, tooltips, dropdowns ─────────────────────── */
-.dark select,
-.dark select option {
-  background: #1a2e18;
-  color: var(--text);
-  border-color: var(--border);
-}
-
-.dark select option:hover,
-.dark select option:checked {
-  background: rgba(76, 175, 80, 0.15);
-}
-
-.dark select option:disabled {
-  color: var(--text-soft);
-}
-
-/* Tooltip-like elements */
-.dark [title] {
-  color: var(--text);
-}
-
-/* All dropdown/overlay panels */
-.dark .basemap-picker-panel,
-.dark .dropdown-menu,
-.dark .popover {
-  background: rgba(20, 35, 18, 0.98);
-  border-color: var(--border);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-}
-
-/* Input placeholders */
-.dark ::placeholder {
+::placeholder {
   color: var(--text-soft);
   opacity: 1;
 }
 
-/* Input autofill */
+input[type="checkbox"],
+input[type="radio"],
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+::selection {
+  background: rgba(var(--accent-rgb), 0.25);
+}
+
+/* Scrollbars — thin, neutral, Apple overlay style */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(var(--ink-rgb), 0.2);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--ink-rgb), 0.32);
+}
+
+/* ── Dark: native-control fixes tokens can't reach ────────────────────────── */
+.dark select option {
+  background: #2c2c2e;
+  color: var(--text);
+}
+
 .dark input:-webkit-autofill,
 .dark input:-webkit-autofill:hover,
 .dark input:-webkit-autofill:focus {
-  -webkit-box-shadow: 0 0 0 1000px rgba(20, 35, 18, 0.9) inset;
+  -webkit-box-shadow: 0 0 0 1000px var(--surface) inset;
   -webkit-text-fill-color: var(--text);
 }
 
-/* Native select dropdown arrow fix */
-.dark select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a3b8a0' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.6rem center;
-  padding-right: 1.8rem;
-}
-
-/* Date input calendar icon */
-.dark input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.7) sepia(0.3) saturate(0.5) hue-rotate(80deg);
-}
-
-/* Number input spinner */
+.dark input[type="date"]::-webkit-calendar-picker-indicator,
 .dark input[type="number"]::-webkit-inner-spin-button,
 .dark input[type="number"]::-webkit-outer-spin-button {
-  filter: invert(0.7) sepia(0.3) saturate(0.5) hue-rotate(80deg);
-}
-
-/* Range input track */
-.dark input[type="range"] {
-  background: rgba(76, 175, 80, 0.12);
-}
-
-/* Checkbox/radio accent */
-.dark input[type="checkbox"],
-.dark input[type="radio"] {
-  accent-color: var(--brand-2);
-}
-
-/* Textarea */
-.dark textarea {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-/* Password input */
-.dark input[type="password"] {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-/* Lcz4py form fields - override hardcoded colors */
-.dark .lcz-field > input,
-.dark .lcz-field > select,
-.dark .lcz-field > textarea,
-.dark .resource-picker > select {
-  background: rgba(20, 35, 18, 0.85);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .lcz-field > input:focus,
-.dark .lcz-field > select:focus,
-.dark .lcz-field > textarea:focus,
-.dark .resource-picker > select:focus {
-  border-color: rgba(76, 175, 80, 0.4);
-  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
-}
-
-/* Resource picker tabs */
-.dark .resource-tabs button {
-  background: rgba(20, 35, 18, 0.7);
-  border-color: var(--border);
-  color: var(--text-weak);
-}
-
-.dark .resource-tabs button:hover {
-  background: rgba(30, 48, 28, 0.9);
-  color: var(--text);
-}
-
-.dark .resource-tabs button.active {
-  background: rgba(76, 175, 80, 0.12);
-  border-color: rgba(76, 175, 80, 0.3);
-  color: var(--brand);
-}
-
-/* Resource status */
-.dark .resource-status {
-  background: rgba(20, 35, 18, 0.6);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .resource-status.ready {
-  background: rgba(76, 175, 80, 0.08);
-  border-color: rgba(76, 175, 80, 0.2);
-}
-
-/* File dropzone */
-.dark .file-dropzone {
-  background: rgba(20, 35, 18, 0.6);
-  border-color: var(--border);
-  color: var(--text-weak);
-}
-
-.dark .file-dropzone:hover {
-  background: rgba(30, 48, 28, 0.8);
-  border-color: var(--border-strong);
-}
-
-/* Switch control */
-.dark .switch-track {
-  background: rgba(20, 35, 18, 0.5);
-  border-color: var(--border);
-}
-
-.dark .switch-control input:checked + .switch-track {
-  background: rgba(76, 175, 80, 0.4);
-  border-color: var(--brand-2);
-}
-
-/* Section headings */
-.dark .section-heading span {
-  background: rgba(76, 175, 80, 0.12);
-  color: var(--brand);
-}
-
-.dark .section-heading h4 {
-  color: var(--text);
-}
-
-.dark .section-heading p {
-  color: var(--text-weak);
-}
-
-/* Advanced toggle */
-.dark .advanced-toggle {
-  background: rgba(20, 35, 18, 0.5);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .advanced-toggle:hover {
-  background: rgba(30, 48, 28, 0.7);
-}
-
-/* Result view */
-.dark .result-group {
-  color: var(--text);
-}
-
-.dark .result-field-label {
-  color: var(--text-weak);
-}
-
-.dark .result-value {
-  color: var(--text);
-}
-
-.dark .result-code {
-  background: rgba(10, 18, 10, 0.8);
-  color: var(--text);
-  border-color: var(--border);
-}
-
-/* Inline help */
-.dark .inline-help {
-  color: var(--text-soft);
-}
-
-.dark .inline-help:hover {
-  color: var(--brand);
-  background: rgba(76, 175, 80, 0.08);
-}
-
-.dark .inline-help.active {
-  color: var(--brand);
-  background: rgba(76, 175, 80, 0.12);
-}
-
-/* Workflow topbar */
-.dark .workflow-topbar {
-  border-color: var(--border);
-}
-
-.dark .back-button {
-  color: var(--text-weak);
-}
-
-.dark .back-button:hover {
-  color: var(--text);
-  background: rgba(76, 175, 80, 0.06);
-}
-
-.dark .help-button {
-  color: var(--text-soft);
-}
-
-.dark .help-button:hover {
-  color: var(--brand);
-  background: rgba(76, 175, 80, 0.08);
-}
-
-/* Function help card */
-.dark .function-help-card {
-  background: rgba(20, 35, 18, 0.6);
-  border-color: var(--border);
-  color: var(--text);
-}
-
-.dark .function-help-card strong {
-  color: var(--text);
-}
-
-.dark .help-facts span {
-  color: var(--text-weak);
-}
-
-.dark .help-facts strong {
-  color: var(--text);
+  filter: invert(1) opacity(0.6);
 }
