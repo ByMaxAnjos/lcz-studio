@@ -117,10 +117,16 @@ fn get_app_paths(app: AppHandle) -> Result<serde_json::Value, String> {
 
 #[tauri::command]
 async fn write_temp_file(name: String, data: Vec<u8>) -> Result<String, String> {
+    // Only accept a bare file name — reject any path component (e.g. "../", "/")
+    // so a crafted `name` can't escape the temp dir onto an arbitrary path.
+    let safe_name = std::path::Path::new(&name)
+        .file_name()
+        .ok_or_else(|| "Invalid file name".to_string())?;
+
     let temp_dir = std::env::temp_dir().join("lcz-studio");
     std::fs::create_dir_all(&temp_dir)
         .map_err(|e| format!("Failed to create temp dir: {e}"))?;
-    let file_path = temp_dir.join(&name);
+    let file_path = temp_dir.join(safe_name);
     std::fs::write(&file_path, &data)
         .map_err(|e| format!("Failed to write temp file: {e}"))?;
     Ok(file_path.to_string_lossy().to_string())

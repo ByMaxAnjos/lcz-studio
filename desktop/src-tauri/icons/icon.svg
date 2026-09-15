@@ -1,0 +1,17 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5cb860"/>
+      <stop offset="40%" style="stop-color:#3d9142"/>
+      <stop offset="100%" style="stop-color:#2d5016"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="32%" cy="28%" r="45%">
+      <stop offset="0%" style="stop-color:rgba(255,183,77,0.3)"/>
+      <stop offset="60%" style="stop-color:rgba(255,183,77,0.08)"/>
+      <stop offset="100%" style="stop-color:rgba(255,183,77,0)"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="224" fill="url(#glow)"/>
+  <text x="512" y="620" text-anchor="middle" fill="white" font-family="Inter, system-ui" font-size="360" font-weight="800" letter-spacing="-12" style="filter: drop-shadow(0 8px 24px rgba(0,0,0,0.2))">LCZ</text>
+</svg>

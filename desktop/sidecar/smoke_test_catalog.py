@@ -98,6 +98,14 @@ def main() -> None:
     )
     assert grid_response.status_code == 200, grid_response.text
 
+    # Regression: categorical LCZ preview must not fail while building
+    # GeoArrow/GeoPandas outputs from polygonized raster classes.
+    preview_response = client.post(
+        "/lcz4py/general/lcz_plot_map",
+        json={"x": grid_path},
+    )
+    assert preview_response.status_code == 200, preview_response.text
+
     if isinstance(client, httpx.Client):
         client.close()
 
