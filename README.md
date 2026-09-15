@@ -12,16 +12,16 @@ Get the latest desktop build from the [Releases page](https://github.com/ByMaxAn
 
 | Platform | Download |
 |----------|----------|
-| 🍎 macOS (Apple Silicon) | [LCZ Studio.dmg](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.1.0/LCZ.Studio_0.1.0_aarch64.dmg) |
-| 🪟 Windows (x64) | [LCZ Studio Setup.exe](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.1.0/LCZ.Studio_0.1.0_x64-setup.exe) |
-| 🐧 Linux (.deb) | [LCZ Studio.deb](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.1.0/LCZ.Studio_0.1.0_amd64.deb) |
-| 🐧 Linux (AppImage) | [LCZ Studio.AppImage](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.1.0/LCZ.Studio_0.1.0_amd64.AppImage) |
+| 🍎 macOS (Apple Silicon) | [LCZ Studio.dmg](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.2.0/LCZ.Studio_0.2.0_aarch64.dmg) |
+| 🪟 Windows (x64) | [LCZ Studio Setup.exe](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.2.0/LCZ.Studio_0.2.0_x64-setup.exe) |
+| 🐧 Linux (.deb) | [LCZ Studio.deb](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.2.0/LCZ.Studio_0.2.0_amd64.deb) |
+| 🐧 Linux (AppImage) | [LCZ Studio.AppImage](https://github.com/ByMaxAnjos/lcz-studio/releases/download/v0.2.0/LCZ.Studio_0.2.0_amd64.AppImage) |
 
 **First-run notes** — the app isn't code-signed yet, so each OS will flag it once:
 
 - **macOS**: right-click the app → **Open** → confirm in the dialog (Gatekeeper blocks a plain double-click). Or from Terminal: `xattr -cr "/Applications/LCZ Studio.app"`.
 - **Windows**: SmartScreen may warn about an unrecognized publisher — click **More info → Run anyway**.
-- **Linux**: make the AppImage executable first (`chmod +x LCZ.Studio_0.1.0_amd64.AppImage`) or install the `.deb` with your package manager.
+- **Linux**: make the AppImage executable first (`chmod +x LCZ.Studio_0.2.0_amd64.AppImage`) or install the `.deb` with your package manager.
 
 ## 🌍 Overview
 

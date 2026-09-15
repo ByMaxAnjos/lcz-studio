@@ -1,9 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import pkg from './package.json'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  // Single source of truth for the version the About panel shows — bumping
+  // package.json is enough, no string to forget in the UI.
+  define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   // Vite options tailored for Tauri to prevent too much magic
   // 1. prevent vite from obscuring rust errors
   clearScreen: false,

@@ -1,6 +1,6 @@
 [package]
 name = "lcz-studio"
-version = "0.1.0"
+version = "0.2.0"
 description = "Local-first desktop GIS for urban-climate / Local Climate Zone analysis"
 authors = ["LCZ Studio Contributors"]
 license = "MIT"

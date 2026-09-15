@@ -1,6 +1,6 @@
 {
   "name": "lcz-studio",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Local-first desktop GIS for urban-climate / Local Climate Zone analysis, powered by LCZ4r.",
   "license": "MIT",
@@ -13,7 +13,7 @@
     "dev:web": "npm --workspace frontend run dev",
     "build:web": "npm --workspace frontend run build",
     "dev:desktop": "npm --workspace desktop run tauri dev",
-    "build:desktop": "npm --workspace desktop run tauri build && npm --workspace desktop run package:dmg",
+    "build:desktop": "npm run build:web && npm --workspace desktop run tauri build && npm --workspace desktop run package:dmg",
     "lint": "npm --workspace frontend run lint",
     "install:all": "npm install && npm --workspace frontend install && npm --workspace desktop install"
   },
